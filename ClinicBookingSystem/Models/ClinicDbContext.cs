@@ -1,6 +1,12 @@
-﻿namespace ClinicBookingSystem.Models
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace ClinicBookingSystem.Models
 {
-    public class DbContext
+    public class ClinicDbContext : DbContext
     {
+        public ClinicDbContext(DbContextOptions<ClinicDbContext> options) : base(options)
+        {
+        }
+
     }
 }
