@@ -1,3 +1,6 @@
+using ClinicBookingSystem.Models;
+using Microsoft.EntityFrameworkCore;
+
 namespace ClinicBookingSystem
 {
     public class Program
@@ -8,6 +11,8 @@ namespace ClinicBookingSystem
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddDbContext<ClinicDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             var app = builder.Build();
 
