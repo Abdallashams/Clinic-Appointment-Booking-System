@@ -1,4 +1,5 @@
 using ClinicBookingSystem.Models;
+using ClinicBookingSystem.Services.Implementation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -40,6 +41,7 @@ namespace ClinicBookingSystem
                 options.LoginPath = "/Account/Login";
                 options.AccessDeniedPath = "/Account/AccessDenied";
             });
+            builder.Services.AddScoped<IUserService,UserService>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
