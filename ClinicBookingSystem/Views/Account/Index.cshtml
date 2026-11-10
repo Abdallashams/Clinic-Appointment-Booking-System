@@ -1,0 +1,412 @@
+﻿@model List<GetApplicationUserVM>
+@{
+    ViewData["Title"] = "Users";
+    var users = Model?.ToList() ?? new List<ClinicBookingSystem.ModelVM.GetApplicationUserVM>();
+    var total = users.Count;
+    var activeCount = users.Count(u => u.IsActive);
+    var inactiveCount = total - activeCount;
+}
+
+<style>
+    .page-head h2 {
+        font-size: 1.7rem;
+        font-weight: 800;
+        color: #0f2a43;
+        margin-bottom: .25rem;
+    }
+
+    .page-head p {
+        color: #64748b;
+        margin: 0;
+    }
+
+    .count-badge {
+        background: rgba(13, 148, 136, .1);
+        color: #0f766e;
+        font-weight: 700;
+        border-radius: 100px;
+        padding: .35rem .9rem;
+        font-size: .9rem;
+    }
+
+    .btn-add {
+        background: linear-gradient(120deg, #0d9488, #0f766e);
+        color: #fff !important;
+        border: none;
+        border-radius: 10px;
+        padding: .6rem 1.2rem;
+        font-weight: 600;
+        box-shadow: 0 6px 14px rgba(13, 148, 136, .28);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: .45rem;
+    }
+
+        .btn-add:hover {
+            color: #fff !important;
+            transform: translateY(-1px);
+        }
+
+    .toolbar-card {
+        background: #fff;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 1rem 1.2rem;
+        box-shadow: 0 4px 14px rgba(15, 42, 67, .04);
+    }
+
+    .search-box {
+        position: relative;
+    }
+
+        .search-box > i {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            right: 14px;
+            color: #94a3b8;
+            pointer-events: none;
+        }
+
+        .search-box .form-control {
+            padding-right: 2.6rem;
+            border-radius: 10px;
+            border: 1.5px solid #e2e8f0;
+        }
+
+            .search-box .form-control:focus {
+                border-color: #0d9488;
+                box-shadow: 0 0 0 4px rgba(13, 148, 136, .14);
+            }
+
+    .filter-pills {
+        display: flex;
+        gap: .5rem;
+        flex-wrap: wrap;
+    }
+
+    .filter-pill {
+        border: 1.5px solid #e2e8f0;
+        background: #fff;
+        color: #334155;
+        border-radius: 100px;
+        padding: .4rem .95rem;
+        font-size: .88rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all .15s;
+    }
+
+        .filter-pill:hover {
+            border-color: #0d9488;
+            color: #0f766e;
+        }
+
+        .filter-pill.active {
+            background: #f0fdfa;
+            border-color: #0d9488;
+            color: #0f766e;
+        }
+
+        .filter-pill .pill-count {
+            opacity: .75;
+            font-weight: 500;
+        }
+
+    .users-card {
+        background: #fff;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 16px;
+        box-shadow: 0 4px 14px rgba(15, 42, 67, .04);
+        overflow: hidden;
+    }
+
+    .users-table {
+        margin: 0;
+    }
+
+        .users-table thead th {
+            background: #f8fafc;
+            color: #475569;
+            font-size: .82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+            border-bottom: 1.5px solid #e2e8f0;
+            padding: .9rem 1rem;
+            white-space: nowrap;
+        }
+
+        .users-table tbody td {
+            padding: .85rem 1rem;
+            vertical-align: middle;
+            color: #1e293b;
+        }
+
+        .users-table tbody tr {
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+            .users-table tbody tr:last-child {
+                border-bottom: none;
+            }
+
+            .users-table tbody tr:hover {
+                background: #f8fafc;
+            }
+
+    .user-cell {
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+    }
+
+        .user-cell .avatar {
+            width: 40px;
+            height: 40px;
+            flex: 0 0 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #14b8a6, #0f766e);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .9rem;
+            font-weight: 800;
+        }
+
+        .user-cell .name {
+            font-weight: 600;
+            color: #0f2a43;
+        }
+
+        .user-cell .sub {
+            font-size: .82rem;
+            color: #94a3b8;
+        }
+
+    .mono {
+        font-size: .88rem;
+        color: #475569;
+    }
+
+    .badge-active {
+        background: rgba(13, 148, 136, .12);
+        color: #0f766e;
+        font-weight: 600;
+        border-radius: 100px;
+        padding: .35rem .8rem;
+        font-size: .82rem;
+    }
+
+    .badge-inactive {
+        background: rgba(220, 38, 38, .09);
+        color: #b91c1c;
+        font-weight: 600;
+        border-radius: 100px;
+        padding: .35rem .8rem;
+        font-size: .82rem;
+    }
+
+    .form-switch .form-check-input {
+        cursor: pointer;
+    }
+
+        .form-switch .form-check-input:checked {
+            background-color: #0d9488;
+            border-color: #0d9488;
+        }
+
+        .form-switch .form-check-input:focus {
+            box-shadow: 0 0 0 4px rgba(13, 148, 136, .14);
+            border-color: #0d9488;
+        }
+
+    .btn-icon {
+        border-radius: 9px;
+        padding: .4rem .55rem;
+        line-height: 1;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3.5rem 1rem;
+    }
+
+        .empty-state .empty-ico {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            margin: 0 auto 1.2rem;
+            background: #f0fdfa;
+            color: #0d9488;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .empty-state h3 {
+            color: #0f2a43;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .empty-state p {
+            color: #64748b;
+        }
+</style>
+
+<div class="page-head d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+    <div>
+        <h2>Users <span class="count-badge">@total</span></h2>
+        <p>Every registered account in the system — patients, doctors and admins.</p>
+    </div>
+    <a asp-controller="Account" asp-action="Register" class="btn-add">
+        <i class="bi bi-person-plus"></i> Add User
+    </a>
+</div>
+
+<div class="toolbar-card d-flex flex-wrap align-items-center gap-3 mb-3">
+    <div class="search-box flex-grow-1" style="min-width: 220px;">
+        <input type="text" id="userSearch" class="form-control" placeholder="Search by name, email or phone..." autocomplete="off" />
+        <i class="bi bi-search"></i>
+    </div>
+    <div class="filter-pills" role="group" aria-label="Filter by status">
+        <button type="button" class="filter-pill active" data-filter="all">All <span class="pill-count">(@total)</span></button>
+        <button type="button" class="filter-pill" data-filter="true">Active <span class="pill-count">(@activeCount)</span></button>
+        <button type="button" class="filter-pill" data-filter="false">Inactive <span class="pill-count">(@inactiveCount)</span></button>
+    </div>
+</div>
+
+<div class="users-card">
+    @if (!users.Any())
+    {
+        <div class="empty-state">
+            <div class="empty-ico"><i class="bi bi-people"></i></div>
+            <h3>No users yet</h3>
+            <p>There are no registered users to show. Create the first account to get started.</p>
+            <a asp-controller="Account" asp-action="Register" class="btn-add mt-2">
+                <i class="bi bi-person-plus"></i> Add User
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table users-table align-middle">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Status</th>
+                        <th>Active</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="usersBody">
+                    @foreach (var user in users)
+                    {
+                        var parts = (user.FullName ?? "?").Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                        var initials = string.Concat(parts.Take(2).Select(p => p[0])).ToUpperInvariant();
+                        <tr data-search="@((user.FullName + " " + user.Email + " " + user.PhoneNumber).ToLowerInvariant())"
+                            data-active="@user.IsActive.ToString().ToLowerInvariant()">
+                            <td>
+                                <div class="user-cell">
+                                    <div class="avatar">@initials</div>
+                                    <div>
+                                        <div class="name">@user.FullName</div>
+                                        <div class="sub">ID: @user.Id</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="mono">@user.Email</td>
+                            <td class="mono">@user.PhoneNumber</td>
+                            <td>
+                                @if (user.IsActive)
+                                {
+                                    <span class="badge-active"><i class="bi bi-check-circle"></i> Active</span>
+                                }
+                                else
+                                {
+                                    <span class="badge-inactive"><i class="bi bi-x-circle"></i> Inactive</span>
+                                }
+                            </td>
+                            <td>
+                                <form asp-controller="Admin" asp-action="ToggleUserStatus" asp-route-id="@user.Id" method="post" class="d-inline">
+                                    <div class="form-check form-switch m-0">
+                                        <input class="form-check-input user-toggle" type="checkbox"
+                                               @(user.IsActive ? "checked" : "")
+                                               title="@(user.IsActive ? "Deactivate user" : "Activate user")" />
+                                    </div>
+                                </form>
+                            </td>
+                            <td class="text-end text-nowrap">
+                                <a asp-controller="Admin" asp-action="EditUser" asp-route-id="@user.Id"
+                                   class="btn btn-sm btn-outline-secondary btn-icon" title="Edit user">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <form asp-controller="Admin" asp-action="DeleteUser" asp-route-id="@user.Id"
+                                      method="post" class="d-inline"
+                                      onsubmit="return confirm('Delete @user.FullName? This cannot be undone.');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger btn-icon" title="Delete user">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div id="noResults" class="empty-state" style="display: none;">
+            <div class="empty-ico"><i class="bi bi-search"></i></div>
+            <h3>No users match your search</h3>
+            <p>Try a different name, email or phone number — or clear the status filter.</p>
+        </div>
+    }
+</div>
+
+<script>
+    // Client-side search + status filter (no reload).
+    (function () {
+        var search = document.getElementById('userSearch');
+        var rows = Array.prototype.slice.call(document.querySelectorAll('#usersBody tr'));
+        var noResults = document.getElementById('noResults');
+        var currentStatus = 'all';
+        if (!search || !rows.length) return;
+
+        function applyFilter() {
+            var q = search.value.trim().toLowerCase();
+            var visible = 0;
+            rows.forEach(function (row) {
+                var matchesText = !q || (row.getAttribute('data-search') || '').indexOf(q) !== -1;
+                var matchesStatus = currentStatus === 'all' || row.getAttribute('data-active') === currentStatus;
+                var show = matchesText && matchesStatus;
+                row.style.display = show ? '' : 'none';
+                if (show) visible++;
+            });
+            if (noResults) noResults.style.display = visible === 0 ? '' : 'none';
+        }
+
+        search.addEventListener('input', applyFilter);
+
+        document.querySelectorAll('.filter-pill').forEach(function (pill) {
+            pill.addEventListener('click', function () {
+                document.querySelectorAll('.filter-pill').forEach(function (p) { p.classList.remove('active'); });
+                pill.classList.add('active');
+                currentStatus = pill.getAttribute('data-filter');
+                applyFilter();
+            });
+        });
+
+        // Toggle switch submits its form (POST to Admin/ToggleUserStatus).
+        document.querySelectorAll('.user-toggle').forEach(function (toggle) {
+            toggle.addEventListener('change', function () {
+                toggle.closest('form').submit();
+            });
+        });
+    })();
+</script>

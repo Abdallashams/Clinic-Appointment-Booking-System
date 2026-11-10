@@ -3,15 +3,16 @@ namespace ClinicBookingSystem.Services.Abstraction
 {
     public interface IUserService
     {
-        Task<List<ApplicationUser>> GetAllUsersAsync();
+        Task<List<GetApplicationUserVM>> GetAllUsersAsync();
 
-        Task<List<ApplicationUser>> GetAllActiveUsersAsync();
+        Task<List<GetApplicationUserVM>> GetAllActiveUsersAsync();
 
-        Task<ApplicationUser?> GetUserByIdAsync(int userId);
+        Task<GetApplicationUserVM?> GetUserByIdAsync(int userId);
 
-        Task CreateUserAsync(ApplicationUserVm user);
+        Task CreateUserAsync(RegisterVm user);
 
-        Task UpdateUserAsync(ApplicationUserVm user);
+        Task LoginAsync(LoginVM user);
+        Task SignOutAsync();
 
         Task DeleteUserAsync(int userId);
     }

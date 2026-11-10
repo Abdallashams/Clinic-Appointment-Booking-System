@@ -1,22 +1,143 @@
-html {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+:root {
+    --teal: #0d9488;
+    --teal-dark: #0f766e;
+    --navy: #0f2a43;
+    --ink: #1e293b;
+    --muted: #64748b;
 }
 
 body {
-  margin-bottom: 60px;
+    font-family: 'Poppins', sans-serif;
+    color: var(--ink);
+}
+
+/* ---------- Navbar ---------- */
+.navbar {
+    background: #fff;
+    box-shadow: 0 2px 12px rgba(15, 42, 67, .07);
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    font-weight: 800;
+    font-size: 1.3rem;
+    color: var(--navy) !important;
+}
+
+    .navbar-brand .logo-mark {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #0d9488, #0f766e);
+        color: #fff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+    }
+
+    .navbar-brand span.brand-care {
+        color: var(--teal);
+    }
+
+.navbar .nav-link {
+    color: var(--navy);
+    font-weight: 500;
+    font-size: .95rem;
+    padding: .5rem .8rem !important;
+}
+
+    .navbar .nav-link:hover {
+        color: var(--teal-dark);
+    }
+
+    .navbar .nav-link.active {
+        color: var(--teal-dark);
+        font-weight: 600;
+    }
+
+        .navbar .nav-link.active::after {
+            content: "";
+            display: block;
+            height: 2px;
+            border-radius: 2px;
+            background: var(--teal);
+            margin-top: 2px;
+        }
+
+.btn-register {
+    background: linear-gradient(120deg, #0d9488, #0f766e);
+    color: #fff !important;
+    border-radius: 10px;
+    padding: .5rem 1.1rem !important;
+    font-weight: 600;
+    font-size: .92rem;
+    box-shadow: 0 6px 14px rgba(13, 148, 136, .28);
+}
+
+    .btn-register:hover {
+        color: #fff !important;
+        transform: translateY(-1px);
+    }
+
+.btn-logout {
+    color: var(--navy);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: .95rem;
+}
+
+    .btn-logout:hover {
+        color: #dc2626;
+    }
+
+.nav-user {
+    color: var(--muted);
+    font-size: .92rem;
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+}
+
+/* ---------- Footer ---------- */
+.site-footer {
+    background: var(--navy);
+    color: #cbd5e1;
+    margin-top: 3rem;
+}
+
+    .site-footer a {
+        color: #5eead4;
+        text-decoration: none;
+    }
+
+        .site-footer a:hover {
+            text-decoration: underline;
+        }
+
+    .site-footer .footer-brand {
+        color: #fff;
+        font-weight: 800;
+        font-size: 1.15rem;
+    }
+
+        .site-footer .footer-brand span {
+            color: #5eead4;
+        }
+
+/* Hide an empty validation summary in layout views too (same rule as the auth views). */
+.validation-summary-valid {
+    display: none;
+}
+
+.validation-summary-errors ul {
+    margin-bottom: 0;
+}
+
+@@media (max-width: 575px) {
+    .navbar-brand {
+        font-size: 1.15rem;
+    }
 }

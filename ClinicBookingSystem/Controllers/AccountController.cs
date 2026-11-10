@@ -11,9 +11,14 @@ namespace ClinicBookingSystem.Controllers
         {
             this.userService = userService;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+           var users= await userService.GetAllActiveUsersAsync();
+            if (users == null || users.Count == 0)
+            {
+                ModelState.AddModelError(string.Empty, "No users found.");
+            }
+            return View(users);
         }
         [HttpGet]
         public IActionResult Register()
@@ -21,7 +26,7 @@ namespace ClinicBookingSystem.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Register(ApplicationUserVm user)
+        public async Task<IActionResult> Register(RegisterVm user)
         {
             if (ModelState.IsValid)
             {
@@ -36,6 +41,37 @@ namespace ClinicBookingSystem.Controllers
                 }
             }
             return View(user);
+        }
+        [HttpGet] 
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginVM user)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    await userService.LoginAsync(user);
+                    return RedirectToAction("Index", "Home");
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                }
+            }
+            return View(user);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Logout()
+        {
+            await userService.SignOutAsync();
+
+            return RedirectToAction("Login", "Account");
         }
     }
 }

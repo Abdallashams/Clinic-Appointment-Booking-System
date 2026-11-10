@@ -1,8 +1,182 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+
+<div class="home-dark">
+    <div class="container">
+
+        <!-- ============ HERO ============ -->
+        <section class="row align-items-center g-4">
+            <div class="col-lg-6">
+                <h1 class="hero-title">Your health,<br />one appointment <span class="text-teal">away.</span></h1>
+                <p class="hero-lead mt-3">
+                    ClinicCare connects patients with specialist doctors. Pick a specialty, check the
+                    doctor's real weekly schedule, and book a time slot — your visit starts as
+                    <strong class="text-white">Pending</strong> and the doctor confirms it.
+                </p>
+                <div class="mt-4">
+                    <a asp-controller="Doctors" asp-action="Index" class="btn-find">
+                        <i class="bi bi-search"></i> Find a Doctor
+                    </a>
+                </div>
+                <ul class="hero-checks">
+                    <li><i class="bi bi-check-lg"></i> Real availability slots</li>
+                    <li><i class="bi bi-check-lg"></i> Doctor-confirmed visits</li>
+                    <li><i class="bi bi-check-lg"></i> Full visit history</li>
+                </ul>
+            </div>
+            <div class="col-lg-6">
+                <div class="hero-photo">
+                    <img src="~/images/hero.jpg" alt="Doctor consulting a patient" onerror="this.remove()" />
+                    <span class="hero-badge"><i class="bi bi-shield-check"></i> Trusted care</span>
+                    <div class="hero-next">
+                        <div class="next-title"><i class="bi bi-calendar-check"></i> Next available today</div>
+                        <p>Doctors publish weekly AvailabilitySlots — pick any open time and it is yours.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ STATS (demo numbers — HomeController.Index passes the real counts) ============ -->
+        <section class="section">
+            <div class="row g-3">
+                <div class="col-6 col-lg-3"><div class="stat-card"><div class="num">8</div><div class="lbl">Specialist doctors</div></div></div>
+                <div class="col-6 col-lg-3"><div class="stat-card"><div class="num">6</div><div class="lbl">Specialties</div></div></div>
+                <div class="col-6 col-lg-3"><div class="stat-card"><div class="num">12</div><div class="lbl">Appointments booked</div></div></div>
+                <div class="col-6 col-lg-3"><div class="stat-card"><div class="num">4</div><div class="lbl">Registered patients</div></div></div>
+            </div>
+        </section>
+
+        <!-- ============ BROWSE BY SPECIALTY (demo — rows from the Specialties table) ============ -->
+        <section class="section">
+            <div class="section-head">
+                <h2>Browse by specialty</h2>
+                <p>Every specialty is a row in the Specialties table — each doctor belongs to exactly one. Tap a specialty to filter the doctors list.</p>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-6 col-lg-4">
+                    <a class="spec-card" asp-controller="Doctors" asp-action="Index" asp-route-specialtyId="1">
+                        <div class="spec-ico"><i class="bi bi-heart-pulse"></i></div>
+                        <h3>Cardiology</h3>
+                        <p>Heart and blood-vessel care: checkups, ECG, stress tests and long-term follow-up.</p>
+                        <span class="spec-link"><i class="bi bi-stethoscope"></i> 2 doctors — view &amp; book</span>
+                    </a>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <a class="spec-card" asp-controller="Doctors" asp-action="Index" asp-route-specialtyId="2">
+                        <div class="spec-ico"><i class="bi bi-stars"></i></div>
+                        <h3>Dermatology</h3>
+                        <p>Skin, hair and nail conditions — from rashes and acne to mole screening.</p>
+                        <span class="spec-link"><i class="bi bi-stethoscope"></i> 2 doctors — view &amp; book</span>
+                    </a>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <a class="spec-card" asp-controller="Doctors" asp-action="Index" asp-route-specialtyId="3">
+                        <div class="spec-ico"><i class="bi bi-emoji-smile"></i></div>
+                        <h3>Pediatrics</h3>
+                        <p>Complete care for infants, children and teens, including vaccinations.</p>
+                        <span class="spec-link"><i class="bi bi-stethoscope"></i> 1 doctor — view &amp; book</span>
+                    </a>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <a class="spec-card" asp-controller="Doctors" asp-action="Index" asp-route-specialtyId="4">
+                        <div class="spec-ico"><i class="bi bi-activity"></i></div>
+                        <h3>Neurology</h3>
+                        <p>Diagnosis and care for brain, spine and nervous-system conditions.</p>
+                        <span class="spec-link"><i class="bi bi-stethoscope"></i> 1 doctor — view &amp; book</span>
+                    </a>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <a class="spec-card" asp-controller="Doctors" asp-action="Index" asp-route-specialtyId="5">
+                        <div class="spec-ico"><i class="bi bi-bandaid"></i></div>
+                        <h3>Orthopedics</h3>
+                        <p>Bones, joints and movement — fractures, sports injuries and rehab.</p>
+                        <span class="spec-link"><i class="bi bi-stethoscope"></i> 1 doctor — view &amp; book</span>
+                    </a>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <a class="spec-card" asp-controller="Doctors" asp-action="Index" asp-route-specialtyId="6">
+                        <div class="spec-ico"><i class="bi bi-eye"></i></div>
+                        <h3>Ophthalmology</h3>
+                        <p>Eye exams, vision correction and complete eye health care.</p>
+                        <span class="spec-link"><i class="bi bi-stethoscope"></i> 1 doctor — view &amp; book</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ HOW BOOKING WORKS ============ -->
+        <section class="section">
+            <div class="section-head">
+                <h2>How booking works</h2>
+                <p>The same flow the ASP.NET backend will run — each step maps to the tables it touches.</p>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="step-card">
+                        <div class="step-num">1</div>
+                        <h3>Create your account</h3>
+                        <p>Register with your Gmail address and pick your role — Patient, Doctor or Admin. Identity creates your user and links the role for you.</p>
+                        <div class="step-db">Writes → <code>AspNetUsers</code> + <code>AspNetUserRoles</code></div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="step-card">
+                        <div class="step-num">2</div>
+                        <h3>Pick a doctor &amp; a slot</h3>
+                        <p>Doctors publish a weekly schedule. Choose a date and one of the free times generated from that day's availability slot.</p>
+                        <div class="step-db">Reads → <code>Doctors</code> + <code>AvailabilitySlots</code></div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="step-card">
+                        <div class="step-num">3</div>
+                        <h3>Doctor confirms your visit</h3>
+                        <p>Your booking is saved as <strong class="text-white">Pending</strong>. The doctor confirms it, and on the day it becomes <strong class="text-white">Completed</strong> — or either side can cancel.</p>
+                        <div class="step-db">Writes → <code>Appointments</code> (Status)</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ MEET OUR DOCTORS (demo — rows from the Doctors table) ============ -->
+        <section class="section">
+            <div class="section-head">
+                <h2>Meet our doctors</h2>
+                <p>A doctor profile is a Doctors row linked 1-to-1 with a user account and one specialty.</p>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="doc-card">
+                        <div class="avatar">LH</div>
+                        <h3>Dr. Layla Hassan</h3>
+                        <div class="doc-spec">Cardiology</div>
+                        <p>Heart checkups, ECG and long-term cardiac follow-up.</p>
+                        <a class="btn-book" asp-controller="Doctors" asp-action="Details" asp-route-id="1">View &amp; book <i class="bi bi-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="doc-card">
+                        <div class="avatar">OK</div>
+                        <h3>Dr. Omar Khalil</h3>
+                        <div class="doc-spec">Dermatology</div>
+                        <p>Skin, hair and nail care — from acne to mole screening.</p>
+                        <a class="btn-book" asp-controller="Doctors" asp-action="Details" asp-route-id="2">View &amp; book <i class="bi bi-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="doc-card">
+                        <div class="avatar">SN</div>
+                        <h3>Dr. Sara Nasser</h3>
+                        <div class="doc-spec">Pediatrics</div>
+                        <p>Complete care for infants, children and teens.</p>
+                        <a class="btn-book" asp-controller="Doctors" asp-action="Details" asp-route-id="3">View &amp; book <i class="bi bi-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
 </div>

@@ -2,7 +2,7 @@
 
 namespace ClinicBookingSystem.ModelVM
 {
-    public class ApplicationUserVm
+    public class RegisterVm
     {
         public string? Id { get; set; }
         [Required(ErrorMessage = "Full name is required.")]
@@ -17,6 +17,7 @@ namespace ClinicBookingSystem.ModelVM
         [Required(ErrorMessage = "Phone number is required.")]
         [Phone(ErrorMessage = "Invalid phone number.")]
         public string? PhoneNumber { get; set; } = null!;
+        [Required(ErrorMessage = "Password is required.")]
         public string? Password { get; set; }
         [Required(ErrorMessage = "Confirm password is required.")]
 

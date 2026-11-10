@@ -1,18 +1,234 @@
-﻿<!DOCTYPE html>
+﻿
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    Func<string, string> active = c => currentController == c ? "active" : "";
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - ClinicBookingSystem</title>
+    <title>@ViewData["Title"] - ClinicCare</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Home.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ClinicBookingSystem.styles.css" asp-append-version="true" />
+    <style>
+        :root {
+            --teal: #0d9488;
+            --teal-dark: #0f766e;
+            --navy: #0f2a43;
+            --ink: #1e293b;
+            --muted: #64748b;
+        }
+
+        html, body {
+            overflow-x: clip;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--ink);
+        }
+
+        /* ---------- Topbar (mirrors the prototype's sticky white header) ---------- */
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 1030;
+            background: #fff;
+            box-shadow: 0 2px 12px rgba(15, 42, 67, .08);
+        }
+
+        .topbar-wrap {
+            max-width: 1200px;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: .65rem;
+            padding: 0;
+        }
+
+            .navbar-brand .logo-mark {
+                width: 42px;
+                height: 42px;
+                border-radius: 11px;
+                flex: 0 0 42px;
+                background: linear-gradient(135deg, #0d9488, #0f766e);
+                color: #fff;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.3rem;
+                box-shadow: 0 6px 14px rgba(13, 148, 136, .28);
+            }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.15;
+        }
+
+        .brand-name {
+            font-weight: 800;
+            font-size: 1.3rem;
+            color: var(--navy);
+        }
+
+            .brand-name span {
+                color: var(--teal);
+            }
+
+        .brand-tag {
+            font-size: .72rem;
+            font-weight: 500;
+            color: var(--muted);
+            letter-spacing: .2px;
+        }
+
+        .topbar .nav-link {
+            color: var(--navy);
+            font-weight: 500;
+            font-size: .95rem;
+            padding: .5rem .8rem !important;
+        }
+
+            .topbar .nav-link:hover {
+                color: var(--teal-dark);
+            }
+
+            .topbar .nav-link.active {
+                color: var(--teal-dark);
+                font-weight: 600;
+            }
+
+                .topbar .nav-link.active::after {
+                    content: "";
+                    display: block;
+                    height: 2px;
+                    border-radius: 2px;
+                    background: var(--teal);
+                    margin-top: 2px;
+                }
+
+        .btn-register {
+            background: linear-gradient(120deg, #0d9488, #0f766e);
+            color: #fff !important;
+            border-radius: 10px;
+            padding: .5rem 1.1rem !important;
+            font-weight: 600;
+            font-size: .92rem;
+            box-shadow: 0 6px 14px rgba(13, 148, 136, .28);
+        }
+
+            .btn-register:hover {
+                color: #fff !important;
+                transform: translateY(-1px);
+            }
+
+        .btn-logout {
+            color: var(--navy);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: .95rem;
+        }
+
+            .btn-logout:hover {
+                color: #dc2626;
+            }
+
+        .nav-user {
+            color: var(--muted);
+            font-size: .92rem;
+            display: flex;
+            align-items: center;
+            gap: .4rem;
+        }
+
+        /* ---------- Footer (mirrors the prototype's navy footer) ---------- */
+        .site-footer {
+            background: var(--navy);
+            color: #cbd5e1;
+        }
+
+            .site-footer h6 {
+                color: #fff;
+                font-weight: 700;
+                font-size: .95rem;
+                margin-bottom: .9rem;
+            }
+
+            .site-footer ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+                display: grid;
+                gap: .45rem;
+            }
+
+            .site-footer a {
+                color: #cbd5e1;
+                text-decoration: none;
+                font-size: .92rem;
+            }
+
+                .site-footer a:hover {
+                    color: #5eead4;
+                }
+
+            .site-footer .footer-brand {
+                color: #fff;
+                font-weight: 800;
+                font-size: 1.15rem;
+            }
+
+                .site-footer .footer-brand span {
+                    color: #5eead4;
+                }
+
+            .site-footer .footer-bottom {
+                border-top: 1px solid rgba(255, 255, 255, .12);
+                font-size: .85rem;
+                color: #94a3b8;
+            }
+
+        /* Hide an empty validation summary in layout views too (same rule as the auth views). */
+        .validation-summary-valid {
+            display: none;
+        }
+
+        .validation-summary-errors ul {
+            margin-bottom: 0;
+        }
+
+        @@media (max-width: 575px) {
+            .brand-tag {
+                display: none;
+            }
+
+            .brand-name {
+                font-size: 1.15rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ClinicBookingSystem</a>
+    <header class="topbar">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light">
+            <div class="container topbar-wrap">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <span class="logo-mark"><i class="bi bi-heart-pulse-fill"></i></span>
+                    <span class="brand-text">
+                        <span class="brand-name">Clinic<span>Care</span></span>
+                        <span class="brand-tag">Appointment Booking System</span>
+                    </span>
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -20,25 +236,98 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link @(active("Home"))" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link @(active("Doctors"))" asp-area="" asp-controller="Doctors" asp-action="Index">Find a Doctor</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(active("Account"))" asp-area="" asp-controller="Account" asp-action="Index">See Available User</a>
+                        </li>
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link @(active("Appointments"))" asp-area="" asp-controller="Appointments" asp-action="Index">My Appointments</a>
+                            </li>
+                        }
+                        @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link @(active("Admin"))" asp-area="" asp-controller="Admin" asp-action="Index">Admin</a>
+                            </li>
+                        }
+                    </ul>
+                    <ul class="navbar-nav align-items-sm-center">
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <li class="nav-item">
+                                <span class="nav-user nav-link"><i class="bi bi-person-circle"></i> Hello, @User.Identity?.Name!</span>
+                            </li>
+                            <li class="nav-item">
+                                <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-link btn-logout nav-link">Logout</button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Login">Sign In</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link btn-register" asp-area="" asp-controller="Account" asp-action="Register">Create Account</a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
+
+    @* ================= THE BODY =================
+       Every view's content renders here, inside @RenderBody().
+       Views have no <html>/<body> of their own — e.g. Views/Home/Index.cshtml
+       (hero, stats, specialties, how-booking-works, doctors) is injected here. *@
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - ClinicBookingSystem - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <footer class="site-footer">
+        <div class="container topbar-wrap py-5">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="footer-brand mb-2">Clinic<span>Care</span></div>
+                    <p class="small mb-0">Clinic Appointment Booking System — book visits, follow up with your doctors.</p>
+                </div>
+                <div class="col-md-4">
+                    <h6>Explore</h6>
+                    <ul>
+                        <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                        <li><a asp-area="" asp-controller="Doctors" asp-action="Index">Find a Doctor</a></li>
+                        <li><a asp-area="" asp-controller="Appointments" asp-action="Index">My Appointments</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h6>Account</h6>
+                    <ul>
+                        <li><a asp-area="" asp-controller="Account" asp-action="Login">Sign In</a></li>
+                        <li><a asp-area="" asp-controller="Account" asp-action="Register">Create Account</a></li>
+                    </ul>
+                    <h6 class="mt-4">Built on</h6>
+                    <ul>
+                        <li>ASP.NET Core MVC</li>
+                        <li>Entity Framework Core</li>
+                        <li>ASP.NET Identity</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container topbar-wrap py-3 text-center">
+                &copy; 2026 ClinicCare — Clinic Appointment System
+            </div>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -47,3 +336,6 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
+
+

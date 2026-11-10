@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace ClinicBookingSystem.Services.Implementation
 {
@@ -7,12 +8,14 @@ namespace ClinicBookingSystem.Services.Implementation
     public class UserService : IUserService
     {
         private readonly UserManager<ApplicationUser> userManager;
+        private readonly SignInManager<ApplicationUser> signInManager;
 
-        public UserService(UserManager<ApplicationUser> userManager)
+        public UserService(UserManager<ApplicationUser> userManager,SignInManager<ApplicationUser> signInManager)
         {
             this.userManager = userManager;
+            this.signInManager = signInManager;
         }
-        public async Task CreateUserAsync(ApplicationUserVm user)
+        public async Task CreateUserAsync(RegisterVm user)
         {
             var newUser = new ApplicationUser
             {
@@ -37,24 +40,86 @@ namespace ClinicBookingSystem.Services.Implementation
             throw new NotImplementedException();
         }
 
-        public Task<List<ApplicationUser>> GetAllActiveUsersAsync()
+
+
+        public async Task<List<GetApplicationUserVM>> GetAllUsersAsync()
         {
-            throw new NotImplementedException();
+            var users = await userManager.Users.ToListAsync();
+            if (users == null || users.Count == 0)
+            {
+                throw new Exception("No users found.");
+            }
+            var userVM = users.Select(u => new GetApplicationUserVM
+            {
+                Id = u.Id,
+                FullName = u.FullName,
+                Email = u.Email,
+                PhoneNumber = u.PhoneNumber,
+                IsActive = u.IsActive
+            }).ToList();
+            return (userVM);
         }
 
-        public Task<List<ApplicationUser>> GetAllUsersAsync()
+
+        public async Task LoginAsync(LoginVM user)
         {
-            throw new NotImplementedException();
+            var result = await signInManager.PasswordSignInAsync(
+                user.Email,
+                user.Password,
+                true,
+                lockoutOnFailure: false
+            );
+
+            if (!result.Succeeded)
+            {
+                throw new Exception("Invalid login attempt.");
+            }
         }
 
-        public Task<ApplicationUser?> GetUserByIdAsync(int userId)
+        public async Task SignOutAsync()
         {
-            throw new NotImplementedException();
+ 
+            await signInManager.SignOutAsync();
+          }
+
+
+
+        public async Task<List<GetApplicationUserVM>> GetAllActiveUsersAsync()
+        {
+            var users = await userManager.Users.Where(e => e.IsActive==true).ToListAsync();
+            if (users == null || users.Count == 0)
+            {
+                throw new Exception("No users found.");
+            }
+            var userVM = users.Select(u => new GetApplicationUserVM
+            {
+                Id = u.Id,
+                FullName = u.FullName,
+                Email = u.Email,
+                PhoneNumber = u.PhoneNumber,
+                IsActive = u.IsActive
+            }).ToList();
+            return (userVM);
         }
 
-        public Task UpdateUserAsync(ApplicationUserVm user)
+        public async Task<GetApplicationUserVM?> GetUserByIdAsync(int userId)
         {
-            throw new NotImplementedException();
+            var user = await userManager.Users
+                .FirstOrDefaultAsync(u => u.Id == userId.ToString());
+
+            if (user == null)
+            {
+                throw new Exception($"User with ID {userId} not found.");
+            }
+
+            return new GetApplicationUserVM
+            {
+                Id = user.Id,
+                FullName = user.FullName,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber
+            };
+
         }
     }
 }
