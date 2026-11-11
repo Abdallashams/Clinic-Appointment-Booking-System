@@ -361,7 +361,7 @@
                                    onclick="return confirm('Make @user.FullName a doctor?');">
                                     <i class="bi bi-heart-pulse"></i> Doctor
                                 </a>
-                                <form asp-controller="Admin" asp-action="DeleteUser" asp-route-id="@user.Id"
+                                <form asp-controller="User" asp-action="Delete" asp-route-userId="@user.Id"
                                       method="post" class="d-inline"
                                       onsubmit="return confirm('Delete @user.FullName? This cannot be undone.');">
                                     <button type="submit" class="btn btn-sm btn-outline-danger btn-icon" title="Delete user">

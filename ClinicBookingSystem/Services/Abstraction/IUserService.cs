@@ -16,7 +16,7 @@ namespace ClinicBookingSystem.Services.Abstraction
         Task LoginAsync(LoginVM user);
         Task SignOutAsync();
 
-        Task DeleteUserAsync(int userId);
+        public Task<bool> DeleteUserAsync(string userId);
         public Task<bool> AddUserToAdmin(string userId);
         public Task<bool> AddUserToDoctor(string userId);
 

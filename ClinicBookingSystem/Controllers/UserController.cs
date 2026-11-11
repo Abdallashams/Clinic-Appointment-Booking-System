@@ -20,6 +20,15 @@ namespace ClinicBookingSystem.Controllers
             }
             return View(users);
         }
+        public async Task<IActionResult> Delete(string userId)
+        {
+            var result = await userService.DeleteUserAsync(userId);
+            if (!result)
+            {
+                ModelState.AddModelError("", "Failed to delete user.");
+            }
+            return RedirectToAction("Index");
+        }
         public async Task<IActionResult> MakeAdmin(string userId)
         {
             var result = await userService.AddUserToAdmin(userId);

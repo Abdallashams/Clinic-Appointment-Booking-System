@@ -39,9 +39,18 @@ namespace ClinicBookingSystem.Services.Implementation
                 throw new Exception($"Failed to create user: {errors}");
             }
         }
-        public Task DeleteUserAsync(int userId)
+        public async Task<bool> DeleteUserAsync(string userId)
         {
-            throw new NotImplementedException();
+            var user = await userManager.FindByIdAsync(userId);
+
+            if (user == null)
+                return false;
+
+            user.IsActive = false;
+
+            var result = await userManager.UpdateAsync(user);
+
+            return result.Succeeded;
         }
 
 
