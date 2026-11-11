@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ClinicBookingSystem.ModelVM
+namespace ClinicBookingSystem.ModelVM.User
 {
     public class RegisterVm
     {

@@ -1,7 +1,7 @@
 ﻿@model List<GetApplicationUserVM>
 @{
     ViewData["Title"] = "Users";
-    var users = Model?.ToList() ?? new List<ClinicBookingSystem.ModelVM.GetApplicationUserVM>();
+    var users = Model?.ToList() ?? new List<GetApplicationUserVM>();
     var total = users.Count;
     var activeCount = users.Count(u => u.IsActive);
     var inactiveCount = total - activeCount;
@@ -310,7 +310,10 @@
                     @foreach (var user in users)
                     {
                         var parts = (user.FullName ?? "?").Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                        var initials = string.Concat(parts.Take(2).Select(p => p[0])).ToUpperInvariant();
+                        var initials = "";
+                        if (parts.Length > 0) { initials += parts[0][0]; }
+                        if (parts.Length > 1) { initials += parts[1][0]; }
+                        initials = initials.ToUpperInvariant();
                         <tr data-search="@((user.FullName + " " + user.Email + " " + user.PhoneNumber).ToLowerInvariant())"
                             data-active="@user.IsActive.ToString().ToLowerInvariant()">
                             <td>
@@ -347,6 +350,16 @@
                                 <a asp-controller="Admin" asp-action="EditUser" asp-route-id="@user.Id"
                                    class="btn btn-sm btn-outline-secondary btn-icon" title="Edit user">
                                     <i class="bi bi-pencil"></i>
+                                </a>
+                                <a asp-controller="User" asp-action="MakeAdmin" asp-route-userId="@user.Id"
+                                   class="btn btn-sm btn-outline-primary" title="Make this user an admin"
+                                   onclick="return confirm('Make @user.FullName an admin?');">
+                                    <i class="bi bi-shield-check"></i> Admin
+                                </a>
+                                <a asp-controller="User" asp-action="MakeDoctor" asp-route-userId="@user.Id"
+                                   class="btn btn-sm btn-outline-success" title="Make this user a doctor"
+                                   onclick="return confirm('Make @user.FullName a doctor?');">
+                                    <i class="bi bi-heart-pulse"></i> Doctor
                                 </a>
                                 <form asp-controller="Admin" asp-action="DeleteUser" asp-route-id="@user.Id"
                                       method="post" class="d-inline"
@@ -410,3 +423,4 @@
         });
     })();
 </script>
+

@@ -1,4 +1,6 @@
 ﻿
+using ClinicBookingSystem.ModelVM.User;
+
 namespace ClinicBookingSystem.Services.Abstraction
 {
     public interface IUserService
@@ -15,5 +17,9 @@ namespace ClinicBookingSystem.Services.Abstraction
         Task SignOutAsync();
 
         Task DeleteUserAsync(int userId);
+        public Task<bool> AddUserToAdmin(string userId);
+        public Task<bool> AddUserToDoctor(string userId);
+
+
     }
 }

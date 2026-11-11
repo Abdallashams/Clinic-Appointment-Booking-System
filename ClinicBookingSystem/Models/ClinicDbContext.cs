@@ -1,4 +1,5 @@
 ﻿using ClinicBookingSystem.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -62,7 +63,31 @@ namespace ClinicBookingSystem.Models
                     .HasForeignKey(a => a.PatientId)
                     .OnDelete(DeleteBehavior.Restrict);
             });
-        }
+
+
+
+            modelBuilder.Entity<IdentityRole>().HasData(
+                new IdentityRole
+                {
+                    Id = "1",
+                    Name = "Admin",
+                    NormalizedName = "ADMIN"
+                },
+                new IdentityRole
+                {
+                    Id = "2",
+                    Name = "Doctor",
+                    NormalizedName = "DOCTOR"
+                },
+                new IdentityRole
+                {
+                    Id = "3",
+                    Name = "Patient",
+                    NormalizedName = "PATIENT"
+                }
+            );
+        
+       }
     }
 }
 

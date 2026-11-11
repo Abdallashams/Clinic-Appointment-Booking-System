@@ -1,4 +1,4 @@
-﻿namespace ClinicBookingSystem.ModelVM
+﻿namespace ClinicBookingSystem.ModelVM.User
 {
     public class GetApplicationUserVM
     {

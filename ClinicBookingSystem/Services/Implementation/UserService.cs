@@ -1,4 +1,5 @@
 ﻿
+using ClinicBookingSystem.ModelVM.User;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,6 +28,9 @@ namespace ClinicBookingSystem.Services.Implementation
             };
 
             var result = await userManager.CreateAsync(newUser,user.Password);
+
+            var roleResult = await userManager.AddToRoleAsync(newUser, "Patient");
+
 
             if (!result.Succeeded)
             {
@@ -120,6 +124,39 @@ namespace ClinicBookingSystem.Services.Implementation
                 PhoneNumber = user.PhoneNumber
             };
 
+        }
+        public async Task<bool> AddUserToAdmin(string userId)
+        {
+            var user = await userManager.FindByIdAsync(userId);
+
+            if (user == null)
+                return false;
+
+            var isAdmin = await userManager.IsInRoleAsync(user, "Admin");
+
+            if (isAdmin)
+                return false;
+
+            var result = await userManager.AddToRoleAsync(user, "Admin");
+
+            return result.Succeeded;
+        }
+
+        public async Task<bool> AddUserToDoctor(string userId)
+        {
+            var user = await userManager.FindByIdAsync(userId);
+
+            if (user == null)
+                return false;
+
+            var isAdmin = await userManager.IsInRoleAsync(user, "Doctor");
+
+            if (isAdmin)
+                return false;
+
+            var result = await userManager.AddToRoleAsync(user, "Doctor");
+
+            return result.Succeeded;
         }
     }
 }

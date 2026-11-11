@@ -1,4 +1,5 @@
-﻿@model RegisterVm
+﻿@using ClinicBookingSystem.ModelVM.User
+@model RegisterVm
 @{
     Layout = null;
 }
@@ -271,14 +272,6 @@
                                 <label class="role-pill">
                                     <input type="checkbox" name="Roles" value="Patient" checked />
                                     <span class="pill"><i class="bi bi-person-heart"></i> Patient</span>
-                                </label>
-                                <label class="role-pill">
-                                    <input type="checkbox" name="Roles" value="Doctor" />
-                                    <span class="pill"><i class="bi bi-stethoscope"></i> Doctor</span>
-                                </label>
-                                <label class="role-pill">
-                                    <input type="checkbox" name="Roles" value="Admin" />
-                                    <span class="pill"><i class="bi bi-shield-lock"></i> Admin</span>
                                 </label>
                             </div>
                             <span asp-validation-for="Roles" class="text-danger"></span>

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ClinicBookingSystem.ModelVM.User;
+using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace ClinicBookingSystem.Controllers
@@ -11,15 +12,7 @@ namespace ClinicBookingSystem.Controllers
         {
             this.userService = userService;
         }
-        public async Task<IActionResult> Index()
-        {
-           var users= await userService.GetAllActiveUsersAsync();
-            if (users == null || users.Count == 0)
-            {
-                ModelState.AddModelError(string.Empty, "No users found.");
-            }
-            return View(users);
-        }
+
         [HttpGet]
         public IActionResult Register()
         {
