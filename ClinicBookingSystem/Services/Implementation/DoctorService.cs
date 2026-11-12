@@ -95,7 +95,6 @@ namespace ClinicBookingSystem.Services.Implementation
                 ProfileImageUrl = Upload.UploadFile("Files", createDoctorVM.ProfileImage)
 
             };
-            //don't forget to add the profile image if it exists
             var result = await clinicDbContext.Doctors.AddAsync(Doctor);
             if (result != null)
             {

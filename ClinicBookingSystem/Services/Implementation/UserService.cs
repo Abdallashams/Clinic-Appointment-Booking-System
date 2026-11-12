@@ -151,6 +151,7 @@ namespace ClinicBookingSystem.Services.Implementation
             return result.Succeeded;
         }
 
+
         public async Task<bool> AddUserToDoctor(string userId)
         {
             var user = await userManager.FindByIdAsync(userId);

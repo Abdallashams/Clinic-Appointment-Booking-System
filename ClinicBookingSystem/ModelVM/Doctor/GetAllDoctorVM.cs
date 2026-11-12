@@ -26,5 +26,7 @@
 
         [Required]
         public string? SpecialtyName { get; set; }
+        public int SpecialtyId { get; set; }
+        
     }
 }

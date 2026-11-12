@@ -253,6 +253,12 @@
                                 <a class="nav-link @(active("Appointments"))" asp-area="" asp-controller="Appointments" asp-action="Index">My Appointments</a>
                             </li>
                         }
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link @(active("Doctor"))" asp-area="" asp-controller="Doctor" asp-action="Index">View Doctors</a>
+                            </li>
+                        }
                         @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
                         {
                             <li class="nav-item">

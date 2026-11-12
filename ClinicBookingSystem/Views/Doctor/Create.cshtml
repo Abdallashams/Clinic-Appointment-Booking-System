@@ -57,7 +57,7 @@
 </div>
 
 <div class="form-card">
-    <form asp-controller="Doctors" asp-action="Create" method="post" enctype="multipart/form-data">
+    <form asp-controller="Doctor" asp-action="Create" method="post" enctype="multipart/form-data">
         <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
         <div class="row g-4">
@@ -147,7 +147,7 @@
 
         <hr class="my-4" />
         <div class="d-flex gap-2 justify-content-end">
-            <a class="btn btn-cancel" asp-controller="Doctors" asp-action="Index">Cancel</a>
+            <a class="btn btn-cancel" asp-controller="Doctor" asp-action="Index">Cancel</a>
             <button type="submit" class="btn btn-create">
                 <i class="bi bi-check-lg"></i> Create Doctor
             </button>

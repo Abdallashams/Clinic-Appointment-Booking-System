@@ -7,10 +7,12 @@ namespace ClinicBookingSystem.Controllers
     public class DoctorController : Controller
     {
         private readonly IDoctorService doctorService;
+        private readonly ISpecialtyService specialtyService;
 
-        public DoctorController(IDoctorService doctorService)
+        public DoctorController(IDoctorService doctorService,ISpecialtyService specialtyService)
         {
             this.doctorService = doctorService;
+            this.specialtyService = specialtyService;
         }
         public async Task<IActionResult> Index()
         {
@@ -25,7 +27,7 @@ namespace ClinicBookingSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            //ViewBag.Specialties = new SelectList(await specialtyService.GetAll(), "Id", "Name");
+            ViewBag.Specialties = new SelectList(await specialtyService.GetAllAsync(), "Id", "Name");
             return View(new CreateDoctorVM());
         }
 
@@ -34,7 +36,7 @@ namespace ClinicBookingSystem.Controllers
         {
             if (!ModelState.IsValid)
             {
-                //ViewBag.Specialties = new SelectList(await specialtyService.GetAll(), "Id", "Name");
+                ViewBag.Specialties = new SelectList(await specialtyService.GetAllAsync(), "Id", "Name");
                 return View(model);
             }
             try
@@ -45,7 +47,7 @@ namespace ClinicBookingSystem.Controllers
             catch (Exception ex)
             {
                 ModelState.AddModelError(string.Empty, $"An error occurred while creating the doctor: {ex.Message}");
-                //ViewBag.Specialties = new SelectList(await specialtyService.GetAll(), "Id", "Name");
+                ViewBag.Specialties = new SelectList(await specialtyService.GetAllAsync(), "Id", "Name");
                 return View(model);
             }
         }
@@ -86,9 +88,9 @@ namespace ClinicBookingSystem.Controllers
                 PhoneNumber = doctor.PhoneNumber,
                 Bio = doctor.Bio,
                 ConsultationDurationMinutes = doctor.ConsultationDurationMinutes,
-                //SpecialtyId = doctor.SpecialtyId
+                SpecialtyId = doctor.SpecialtyId
             };
-            //ViewBag.Specialties = new SelectList(await specialtyService.GetAll(), "Id", "Name");
+            ViewBag.Specialties = new SelectList(await specialtyService.GetAllAsync(), "Id", "Name");
             return View(model);
         }
 

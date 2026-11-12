@@ -4,6 +4,7 @@ namespace ClinicBookingSystem.Models
 {
     public class Specialty
     {
+
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Specialty name is required")]

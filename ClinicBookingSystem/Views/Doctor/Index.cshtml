@@ -236,7 +236,7 @@ else
                 <div class="doc-card @(d.IsActive ? "" : "inactive")">
                     @if (!string.IsNullOrEmpty(d.ProfileImageUrl))
                     {
-                        <img src="@d.ProfileImageUrl" alt="@d.FullName" class="doc-img" />
+                        <img src="~/Files/@d.ProfileImageUrl" alt="@d.FullName" class="doc-img" />
                     }
                     else
                     {
