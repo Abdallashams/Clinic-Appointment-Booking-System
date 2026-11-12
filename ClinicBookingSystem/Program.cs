@@ -1,5 +1,3 @@
-
-using ClinicBookingSystem.Models;
 using ClinicBookingSystem.Services.Implementation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -16,8 +14,9 @@ namespace ClinicBookingSystem
 
             builder.Services.AddDbContext<ClinicDbContext>(options =>
                 options.UseSqlServer(
-                    builder.Configuration.GetConnectionString("DefaultConnection")
+                    builder.Configuration.GetConnectionString("ConnectionStrings")
                 ));
+
 
             // Identity Configuration
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
@@ -42,6 +41,8 @@ namespace ClinicBookingSystem
             });
 
             builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<ISpecialtyService , SpecialtyService>();
+
 
             var app = builder.Build();
 
