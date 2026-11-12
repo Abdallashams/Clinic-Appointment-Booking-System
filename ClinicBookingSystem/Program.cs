@@ -42,6 +42,7 @@ namespace ClinicBookingSystem
             });
 
             builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IDoctorService, DoctorService>();
 
             var app = builder.Build();
 

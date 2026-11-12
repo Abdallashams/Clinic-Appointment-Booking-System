@@ -51,7 +51,7 @@ namespace ClinicBookingSystem.Models
         [ForeignKey(nameof(ApplicationUserId))]
         public ApplicationUser? ApplicationUser { get; set; }
 
-        public ICollection<AvailabilitySlot> Availabilities { get; set; } = new List<AvailabilitySlot>();
+        public List<AvailabilitySlot> Availabilities { get; set; } = new List<AvailabilitySlot>();
         public List<Appointment> Appointments { get; set; } = new List<Appointment>();
 
     }

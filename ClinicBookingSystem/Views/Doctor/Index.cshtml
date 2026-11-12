@@ -1,0 +1,297 @@
+﻿@model List<GetAllDoctorVM>
+@{
+    ViewData["Title"] = "Find a Doctor";
+}
+
+<style>
+    .page-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin: 1.6rem 0 1.2rem;
+    }
+
+        .page-head h2 {
+            color: var(--navy);
+            font-weight: 800;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+        }
+
+            .page-head h2 i {
+                color: var(--teal);
+            }
+
+        .page-head p {
+            color: var(--muted);
+            margin: .25rem 0 0;
+            font-size: .95rem;
+        }
+
+    .btn-add {
+        background: linear-gradient(120deg, #0d9488, #0f766e);
+        color: #fff;
+        border-radius: 10px;
+        padding: .55rem 1.2rem;
+        font-weight: 600;
+        box-shadow: 0 6px 14px rgba(13, 148, 136, .28);
+    }
+
+        .btn-add:hover {
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+    .doc-card {
+        background: #fff;
+        border: 1px solid #eef2f7;
+        border-radius: 20px;
+        height: 100%;
+        box-shadow: 0 12px 28px rgba(15, 42, 67, .07);
+        padding: 1.4rem;
+        text-align: center;
+        transition: transform .15s, box-shadow .15s;
+    }
+
+        .doc-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 18px 36px rgba(15, 42, 67, .12);
+        }
+
+        .doc-card.inactive {
+            opacity: .72;
+        }
+
+    .doc-img, .doc-initial {
+        width: 96px;
+        height: 96px;
+        border-radius: 50%;
+        margin: 0 auto .9rem;
+        object-fit: cover;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .doc-initial {
+        background: linear-gradient(135deg, #0d9488, #0f766e);
+        color: #fff;
+        font-size: 2.2rem;
+        font-weight: 700;
+    }
+
+    .doc-name {
+        color: var(--navy);
+        font-weight: 700;
+        font-size: 1.12rem;
+        margin: 0;
+    }
+
+    .spec-badge {
+        display: inline-block;
+        background: #f0fdfa;
+        color: var(--teal-dark);
+        border: 1px solid #99f6e4;
+        border-radius: 999px;
+        padding: .18rem .8rem;
+        font-size: .8rem;
+        font-weight: 600;
+        margin-top: .5rem;
+    }
+
+    .doc-bio {
+        color: var(--muted);
+        font-size: .9rem;
+        margin: .8rem 0 0;
+        min-height: 2.6em;
+    }
+
+    .doc-meta {
+        color: var(--muted);
+        font-size: .86rem;
+        display: grid;
+        gap: .3rem;
+        margin-top: .9rem;
+        text-align: left;
+    }
+
+        .doc-meta i {
+            color: var(--teal);
+            margin-right: .35rem;
+        }
+
+    .status-badge {
+        font-size: .75rem;
+        font-weight: 700;
+        border-radius: 999px;
+        padding: .22rem .7rem;
+    }
+
+    .status-on {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+    .status-off {
+        background: #e2e8f0;
+        color: #64748b;
+    }
+
+    .btn-edit {
+        border: 1.5px solid var(--teal);
+        color: var(--teal-dark);
+        border-radius: 10px;
+        font-weight: 600;
+    }
+
+        .btn-edit:hover {
+            background: var(--teal);
+            color: #fff;
+        }
+
+    .btn-toggle {
+        border: 1.5px solid #e2e8f0;
+        color: var(--navy);
+        border-radius: 10px;
+        font-weight: 600;
+        background: #fff;
+    }
+
+        .btn-toggle:hover {
+            border-color: var(--teal);
+            color: var(--teal-dark);
+        }
+
+    .btn-delete {
+        border: 1.5px solid #fecaca;
+        color: #dc2626;
+        border-radius: 10px;
+        font-weight: 600;
+        background: #fff;
+    }
+
+        .btn-delete:hover {
+            background: #dc2626;
+            border-color: #dc2626;
+            color: #fff;
+        }
+
+    .card-form {
+        flex: 1 1 0;
+        display: flex;
+    }
+
+        .card-form .btn {
+            flex: 1 1 0;
+        }
+
+    .empty-box {
+        background: #fff;
+        border: 1px dashed #cbd5e1;
+        border-radius: 20px;
+        padding: 3rem 1.5rem;
+        text-align: center;
+        color: var(--muted);
+    }
+
+        .empty-box i {
+            font-size: 2.6rem;
+            color: var(--teal);
+            display: block;
+            margin-bottom: .8rem;
+        }
+</style>
+
+<div class="page-head">
+    <div>
+        <h2><i class="bi bi-people-fill"></i> Find a Doctor</h2>
+        <p>@Model.Count doctor(s) in the directory.</p>
+    </div>
+    <a class="btn btn-add" asp-controller="Doctor" asp-action="Create">
+        <i class="bi bi-person-plus-fill"></i> Add Doctor
+    </a>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="empty-box">
+        <i class="bi bi-person-dash"></i>
+        <div class="fw-semibold" style="color: var(--navy);">No doctors found</div>
+        <div>Add the first doctor to get started.</div>
+    </div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var d in Model)
+        {
+            var initial = string.IsNullOrWhiteSpace(d.FullName) ? "D" : d.FullName.Trim().Substring(0, 1).ToUpper();
+            var bio = d.Bio ?? "";
+            if (bio.Length > 90) { bio = bio.Substring(0, 90) + "..."; }
+            <div class="col">
+                <div class="doc-card @(d.IsActive ? "" : "inactive")">
+                    @if (!string.IsNullOrEmpty(d.ProfileImageUrl))
+                    {
+                        <img src="@d.ProfileImageUrl" alt="@d.FullName" class="doc-img" />
+                    }
+                    else
+                    {
+                        <div class="doc-initial">@initial</div>
+                    }
+
+                    <h5 class="doc-name">@d.FullName</h5>
+                    <span class="spec-badge"><i class="bi bi-heart-pulse"></i> @d.SpecialtyName</span>
+
+                    <p class="doc-bio">@bio</p>
+
+                    <div class="doc-meta">
+                        <span><i class="bi bi-clock"></i> @d.ConsultationDurationMinutes min consultation</span>
+                        <span><i class="bi bi-telephone"></i> @d.PhoneNumber</span>
+                        <span><i class="bi bi-envelope"></i> @d.Email</span>
+                    </div>
+
+                    <div class="mt-3">
+                        @if (d.IsActive)
+                        {
+                            <span class="status-badge status-on"><i class="bi bi-check-circle"></i> Active</span>
+                        }
+                        else
+                        {
+                            <span class="status-badge status-off"><i class="bi bi-pause-circle"></i> Inactive</span>
+                        }
+                    </div>
+
+                    <div class="d-flex gap-2 mt-3">
+                        <a class="btn btn-edit flex-fill" asp-controller="Doctor" asp-action="Update" asp-route-id="@d.Id">
+                            <i class="bi bi-pencil"></i> Edit
+                        </a>
+                    </div>
+                    <div class="d-flex gap-2 mt-2">
+                        <form asp-controller="Doctor" asp-action="ToggleActive" asp-route-id="@d.Id" method="post" class="card-form">
+                            <button type="submit" class="btn btn-toggle">
+                                @if (d.IsActive)
+                                {
+                                    <span><i class="bi bi-pause-circle"></i> Deactivate</span>
+                                }
+                                else
+                                {
+                                    <span><i class="bi bi-play-circle"></i> Activate</span>
+                                }
+                            </button>
+                        </form>
+                        <form asp-controller="Doctor" asp-action="Delete" asp-route-id="@d.Id" method="post" class="card-form"
+                              onsubmit="return confirm('Delete this doctor? This cannot be undone.');">
+                            <button type="submit" class="btn btn-delete">
+                                <i class="bi bi-trash"></i> Delete
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
