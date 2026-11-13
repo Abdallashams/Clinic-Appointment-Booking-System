@@ -1,33 +1,245 @@
-﻿@model ClinicBookingSystem.ModelVM.AvailabilitySlot.GetAvailabilitySlotVM
+﻿@model GetAvailabilitySlotVM
 
 @{
     ViewData["Title"] = "Slot Details";
+    var length = Model.EndTime - Model.StartTime;
+    var lengthText = length.Minutes == 0
+        ? length.Hours + " hours"
+        : length.Hours + " h " + length.Minutes + " min";
 }
 
-<div class="container mt-4">
-    <h2>Availability Slot Details</h2>
+<style>
+    .page-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin: 1.6rem 0 1.2rem;
+    }
 
+        .page-head h2 {
+            color: var(--navy);
+            font-weight: 800;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+        }
+
+            .page-head h2 i {
+                color: var(--teal);
+            }
+
+        .page-head p {
+            color: var(--muted);
+            margin: .25rem 0 0;
+            font-size: .95rem;
+        }
+
+    .btn-back {
+        border: 1.5px solid #e2e8f0;
+        color: var(--navy);
+        border-radius: 10px;
+        font-weight: 600;
+    }
+
+        .btn-back:hover {
+            border-color: var(--teal);
+            color: var(--teal-dark);
+        }
+
+    .details-wrap {
+        max-width: 760px;
+        margin: 0 auto;
+    }
+
+    .details-card {
+        background: #fff;
+        border: 1px solid #eef2f7;
+        border-radius: 20px;
+        box-shadow: 0 18px 40px rgba(15, 42, 67, .08);
+        padding: 1.8rem;
+    }
+
+    .slot-head {
+        display: flex;
+        align-items: center;
+        gap: 1.1rem;
+    }
+
+    .slot-icon {
+        width: 72px;
+        height: 72px;
+        border-radius: 20px;
+        flex: 0 0 auto;
+        background: linear-gradient(135deg, #0d9488, #0f766e);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.9rem;
+        box-shadow: 0 10px 22px rgba(13, 148, 136, .3);
+    }
+
+    .slot-doc {
+        color: var(--navy);
+        font-weight: 800;
+        font-size: 1.5rem;
+        margin: 0;
+    }
+
+    .slot-sub {
+        color: var(--muted);
+        font-size: .9rem;
+        margin-top: .15rem;
+    }
+
+    .status-badge {
+        font-size: .78rem;
+        font-weight: 700;
+        border-radius: 999px;
+        padding: .25rem .75rem;
+        margin-left: auto;
+    }
+
+    .status-on {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+    .status-off {
+        background: #e2e8f0;
+        color: #64748b;
+    }
+
+    .time-range {
+        background: #f0fdfa;
+        border: 1px solid #99f6e4;
+        border-radius: 16px;
+        padding: 1.1rem 1.3rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+        .time-range .t {
+            color: var(--navy);
+            font-weight: 800;
+            font-size: 1.6rem;
+            letter-spacing: .5px;
+        }
+
+        .time-range .arrow {
+            color: var(--teal);
+            font-size: 1.2rem;
+        }
+
+        .time-range .len {
+            color: var(--teal-dark);
+            font-weight: 600;
+            margin-left: auto;
+            font-size: .95rem;
+        }
+
+    .info-row {
+        display: flex;
+        gap: 2.5rem;
+        flex-wrap: wrap;
+        margin-top: 1.3rem;
+    }
+
+    .field-label {
+        font-size: .72rem;
+        letter-spacing: .6px;
+        text-transform: uppercase;
+        color: var(--muted);
+        font-weight: 700;
+        margin-bottom: .3rem;
+    }
+
+    .field-value {
+        color: var(--navy);
+        font-weight: 600;
+        font-size: 1.02rem;
+    }
+
+    .day-chip {
+        display: inline-block;
+        background: #f0fdfa;
+        color: var(--teal-dark);
+        border: 1px solid #99f6e4;
+        border-radius: 999px;
+        padding: .2rem .85rem;
+        font-weight: 700;
+    }
+
+    .btn-cancel {
+        border: 1.5px solid #e2e8f0;
+        color: var(--navy);
+        border-radius: 10px;
+        padding: .6rem 1.4rem;
+        font-weight: 600;
+    }
+
+        .btn-cancel:hover {
+            border-color: #cbd5e1;
+            color: var(--navy);
+        }
+</style>
+
+<div class="page-head">
     <div>
-        <hr />
-        <dl class="row">
-            <dt class="col-sm-3">Doctor Name:</dt>
-            <dd class="col-sm-9">@Model.DoctorName</dd>
-
-            <dt class="col-sm-3">Day of Week:</dt>
-            <dd class="col-sm-9">@Model.DayOfWeek</dd>
-
-            <dt class="col-sm-3">Start Time:</dt>
-            <dd class="col-sm-9">@Model.StartTime</dd>
-
-            <dt class="col-sm-3">End Time:</dt>
-            <dd class="col-sm-9">@Model.EndTime</dd>
-
-            <dt class="col-sm-3">Status:</dt>
-            <dd class="col-sm-9">@(Model.IsActive ? "Active" : "Inactive")</dd>
-        </dl>
+        <h2><i class="bi bi-calendar-week"></i> Slot Details</h2>
+        <p>A weekly availability window — it repeats every week on the same day.</p>
     </div>
+    <a class="btn btn-back" asp-action="Index">
+        <i class="bi bi-arrow-left"></i> Back to List
+    </a>
+</div>
 
-    <div>
-        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+<div class="details-wrap">
+    <div class="details-card">
+        <div class="slot-head">
+            <div class="slot-icon"><i class="bi bi-calendar-check"></i></div>
+            <div>
+                <h3 class="slot-doc">@Model.DoctorName</h3>
+                <div class="slot-sub">Doctor's weekly availability</div>
+            </div>
+            @if (Model.IsActive)
+            {
+                <span class="status-badge status-on"><i class="bi bi-check-circle"></i> Active</span>
+            }
+            else
+            {
+                <span class="status-badge status-off"><i class="bi bi-pause-circle"></i> Inactive</span>
+            }
+        </div>
+
+        <hr class="my-4" />
+
+        <div class="time-range">
+            <span class="t">@Model.StartTime.ToString(@"hh\:mm")</span>
+            <span class="arrow"><i class="bi bi-arrow-right"></i></span>
+            <span class="t">@Model.EndTime.ToString(@"hh\:mm")</span>
+            <span class="len"><i class="bi bi-clock"></i> @lengthText</span>
+        </div>
+
+        <div class="info-row">
+            <div>
+                <div class="field-label">Day of Week</div>
+                <span class="day-chip"><i class="bi bi-calendar3"></i> @Model.DayOfWeek</span>
+            </div>
+            <div>
+                <div class="field-label">Repeats</div>
+                <div class="field-value">Every @Model.DayOfWeek</div>
+            </div>
+        </div>
+
+        <hr class="my-4" />
+        <div class="d-flex gap-2 justify-content-end">
+            <a class="btn btn-cancel" asp-action="Index">Back to List</a>
+        </div>
     </div>
 </div>

@@ -1,52 +1,216 @@
-﻿@model ClinicBookingSystem.ModelVM.AvailabilitySlot.CreateAvailabilitySlotVM
+﻿@model CreateAvailabilitySlotVM
 
 @{
     ViewData["Title"] = "Add Availability Slot";
 }
 
-<div class="container mt-4">
-    <h2>Add New Availability Slot</h2>
+<style>
+    .page-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin: 1.6rem 0 1.2rem;
+    }
 
-    <form asp-action="Create" method="post">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        .page-head h2 {
+            color: var(--navy);
+            font-weight: 800;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+        }
 
-        <div class="form-group mb-3">
-            <label asp-for="DoctorId" class="control-label">Doctor</label>
-            <select asp-for="DoctorId" class="form-control" asp-items="ViewBag.Doctors">
-                <option value="">-- Select Doctor --</option>
-            </select>
-            <span asp-validation-for="DoctorId" class="text-danger"></span>
-        </div>
+            .page-head h2 i {
+                color: var(--teal);
+            }
 
-        <div class="form-group mb-3">
-            <label asp-for="DayOfWeek" class="control-label"></label>
-            <select asp-for="DayOfWeek" class="form-control" asp-items="Html.GetEnumSelectList<DayOfWeek>()">
-                <option value="">-- Select Day --</option>
-            </select>
-            <span asp-validation-for="DayOfWeek" class="text-danger"></span>
-        </div>
+        .page-head p {
+            color: var(--muted);
+            margin: .25rem 0 0;
+            font-size: .95rem;
+        }
 
-        <div class="form-group mb-3">
-            <label asp-for="StartTime" class="control-label"></label>
-            <input asp-for="StartTime" class="form-control" type="time" />
-            <span asp-validation-for="StartTime" class="text-danger"></span>
-        </div>
+    .btn-back {
+        border: 1.5px solid #e2e8f0;
+        color: var(--navy);
+        border-radius: 10px;
+        font-weight: 600;
+    }
 
-        <div class="form-group mb-3">
-            <label asp-for="EndTime" class="control-label"></label>
-            <input asp-for="EndTime" class="form-control" type="time" />
-            <span asp-validation-for="EndTime" class="text-danger"></span>
-        </div>
+        .btn-back:hover {
+            border-color: var(--teal);
+            color: var(--teal-dark);
+        }
 
-        <div class="form-group">
-            <input type="submit" value="Create" class="btn btn-success" />
-            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-        </div>
-    </form>
+    .form-wrap {
+        max-width: 760px;
+        margin: 0 auto;
+    }
+
+    .form-card {
+        background: #fff;
+        border: 1px solid #eef2f7;
+        border-radius: 20px;
+        box-shadow: 0 18px 40px rgba(15, 42, 67, .08);
+        padding: 1.8rem;
+    }
+
+        .form-card .form-label {
+            font-weight: 600;
+            color: var(--navy);
+            font-size: .92rem;
+        }
+
+    .input-group-text {
+        background: #f0fdfa;
+        color: var(--teal-dark);
+        border-color: #e2e8f0;
+    }
+
+    .form-control, .form-select {
+        border-color: #e2e8f0;
+        border-radius: 10px;
+        padding: .6rem .9rem;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--teal);
+            box-shadow: 0 0 0 .2rem rgba(13, 148, 136, .15);
+        }
+
+    .field-validation-error {
+        color: #dc2626;
+        font-size: .85rem;
+    }
+
+    .form-hint {
+        color: var(--muted);
+        font-size: .82rem;
+        margin-top: .35rem;
+    }
+
+    .time-error {
+        color: #dc2626;
+        font-size: .85rem;
+        display: none;
+        margin-top: .5rem;
+    }
+
+    .btn-create {
+        background: linear-gradient(120deg, #0d9488, #0f766e);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: .65rem 1.6rem;
+        font-weight: 600;
+        box-shadow: 0 6px 14px rgba(13, 148, 136, .28);
+    }
+
+        .btn-create:hover {
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+    .btn-cancel {
+        border: 1.5px solid #e2e8f0;
+        color: var(--navy);
+        border-radius: 10px;
+        padding: .65rem 1.4rem;
+        font-weight: 600;
+    }
+
+        .btn-cancel:hover {
+            border-color: #cbd5e1;
+            color: var(--navy);
+        }
+</style>
+
+<div class="page-head">
+    <div>
+        <h2><i class="bi bi-calendar-week"></i> Add Availability Slot</h2>
+        <p>One slot = one continuous shift for a doctor on a weekday — it repeats every week.</p>
+    </div>
+    <a class="btn btn-back" asp-action="Index">
+        <i class="bi bi-arrow-left"></i> Back to List
+    </a>
+</div>
+
+<div class="form-wrap">
+    <div class="form-card">
+        <form asp-action="Create" method="post" id="slotForm">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+            <div class="mb-3">
+                <label class="form-label" for="DoctorId">Doctor</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-person"></i></span>
+                    <select asp-for="DoctorId" asp-items="ViewBag.Doctors" class="form-select">
+                        <option value="">-- Select doctor --</option>
+                    </select>
+                </div>
+                <span asp-validation-for="DoctorId"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="DayOfWeek" class="form-label"></label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-calendar3"></i></span>
+                    <select asp-for="DayOfWeek" asp-items="Html.GetEnumSelectList<System.DayOfWeek>()" class="form-select">
+                        <option value="">-- Select day --</option>
+                    </select>
+                </div>
+                <span asp-validation-for="DayOfWeek"></span>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="StartTime" class="form-label"></label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-clock"></i></span>
+                        <input asp-for="StartTime" type="time" class="form-control" />
+                    </div>
+                    <span asp-validation-for="StartTime"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="EndTime" class="form-label"></label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-clock-fill"></i></span>
+                        <input asp-for="EndTime" type="time" class="form-control" />
+                    </div>
+                    <span asp-validation-for="EndTime"></span>
+                </div>
+            </div>
+            <div class="time-error" id="timeError"><i class="bi bi-exclamation-circle"></i> End time must be after start time.</div>
+            <div class="form-hint">Example: Sunday, 09:00 → 13:00 means the doctor is bookable every Sunday morning.</div>
+
+            <hr class="my-4" />
+            <div class="d-flex gap-2 justify-content-end">
+                <a class="btn btn-cancel" asp-action="Index">Cancel</a>
+                <button type="submit" class="btn btn-create">
+                    <i class="bi bi-plus-lg"></i> Add Slot
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Guard: never submit a slot whose end is not after its start.
+        document.getElementById('slotForm').addEventListener('submit', function (e) {
+            var start = document.getElementById('StartTime').value;
+            var end = document.getElementById('EndTime').value;
+            var err = document.getElementById('timeError');
+            if (start && end && end <= start) {
+                e.preventDefault();
+                err.style.display = 'block';
+            } else {
+                err.style.display = 'none';
+            }
+        });
+    </script>
 }
