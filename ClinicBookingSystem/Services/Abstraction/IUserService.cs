@@ -1,5 +1,6 @@
 ﻿
 using ClinicBookingSystem.ModelVM.User;
+using Microsoft.AspNetCore.Identity;
 
 namespace ClinicBookingSystem.Services.Abstraction
 {
@@ -13,7 +14,7 @@ namespace ClinicBookingSystem.Services.Abstraction
 
         Task CreateUserAsync(RegisterVm user);
 
-        Task LoginAsync(LoginVM user);
+        public Task<SignInResult> LoginAsync(LoginVM user);
         Task SignOutAsync();
 
         public Task<bool> DeleteUserAsync(string userId);

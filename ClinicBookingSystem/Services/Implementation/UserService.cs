@@ -73,20 +73,21 @@ namespace ClinicBookingSystem.Services.Implementation
             return (userVM);
         }
 
-
-        public async Task LoginAsync(LoginVM user)
+        public async Task<SignInResult> LoginAsync(LoginVM user)
         {
+            var existingUser = await userManager.FindByEmailAsync(user.Email);
+
+            if (existingUser == null)
+                return SignInResult.Failed;
+
             var result = await signInManager.PasswordSignInAsync(
-                user.Email,
+                existingUser,
                 user.Password,
-                true,
-                lockoutOnFailure: false
+                isPersistent: true,
+                lockoutOnFailure: true
             );
 
-            if (!result.Succeeded)
-            {
-                throw new Exception("Invalid login attempt.");
-            }
+            return result;
         }
 
         public async Task SignOutAsync()

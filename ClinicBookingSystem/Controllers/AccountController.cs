@@ -44,18 +44,23 @@ namespace ClinicBookingSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginVM user)
         {
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    await userService.LoginAsync(user);
-                    return RedirectToAction("Index", "Home");
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError(string.Empty, ex.Message);
-                }
-            }
+            if (!ModelState.IsValid)
+                return View(user);
+
+            var result = await userService.LoginAsync(user);
+
+            if (result.Succeeded)
+                return RedirectToAction("Index", "Home");
+
+            if (result.IsLockedOut)
+                ModelState.AddModelError("", "Your account is locked.");
+
+            else if (result.IsNotAllowed)
+                ModelState.AddModelError("", "Login is not allowed.");
+
+            else
+                ModelState.AddModelError("", "Invalid email or password.");
+
             return View(user);
         }
         [HttpPost]
