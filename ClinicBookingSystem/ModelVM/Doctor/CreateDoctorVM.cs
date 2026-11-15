@@ -27,6 +27,9 @@
         [Required(ErrorMessage = "Specialty is required")]
         [Display(Name = "Specialty")]
         public int SpecialtyId { get; set; }
+        // there is error here
+
+        public string? ApplicationUserId { get; set; }
 
         [Display(Name = "Profile Image")]
         public IFormFile? ProfileImage { get; set; }

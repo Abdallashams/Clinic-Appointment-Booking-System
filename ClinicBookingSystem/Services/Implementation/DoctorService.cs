@@ -92,7 +92,8 @@ namespace ClinicBookingSystem.Services.Implementation
                 Bio = createDoctorVM.Bio,
                 ConsultationDurationMinutes = createDoctorVM.ConsultationDurationMinutes,
                 SpecialtyId = createDoctorVM.SpecialtyId,
-                ProfileImageUrl = Upload.UploadFile("Files", createDoctorVM.ProfileImage)
+                ProfileImageUrl = Upload.UploadFile("Files", createDoctorVM.ProfileImage),
+                ApplicationUserId = createDoctorVM.ApplicationUserId,
 
             };
             var result = await clinicDbContext.Doctors.AddAsync(Doctor);

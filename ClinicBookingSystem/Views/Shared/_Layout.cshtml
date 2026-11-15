@@ -251,7 +251,7 @@
                         @if (SignInManager.IsSignedIn(User))
                         {
                             <li class="nav-item">
-                                <a class="nav-link @(active("Appointments"))" asp-area="" asp-controller="Appointments" asp-action="Index">My Appointments</a>
+                                <a class="nav-link @(active("Appointment"))" asp-area="" asp-controller="Appointment" asp-action="Index">My Appointments</a>
                             </li>
                         }
                         @if (SignInManager.IsSignedIn(User))
