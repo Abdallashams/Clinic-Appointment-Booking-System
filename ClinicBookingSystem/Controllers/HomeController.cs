@@ -1,21 +1,34 @@
-using System.Diagnostics;
-using ClinicBookingSystem.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace ClinicBookingSystem.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        private readonly ILogger<HomeController> _logger;
+        private readonly IDoctorService doctorService;
+        private readonly ISpecialtyService specialtyService;
+        private readonly UserManager<ApplicationUser> userManager;
+        private readonly IAppointmentService appointmentService;
+
+        public HomeController(IDoctorService doctorService,ISpecialtyService specialtyService,UserManager<ApplicationUser> userManager,IAppointmentService appointmentService, ILogger<HomeController> logger)
         {
+            this.doctorService = doctorService;
+            this.specialtyService = specialtyService;
+            this.userManager = userManager;
+            this.appointmentService = appointmentService;
             _logger = logger;
         }
-
-        public IActionResult Index()
+  
+        [HttpGet]
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var doctors = await doctorService.GetAll();
+            ViewBag.AppointmentsCount = (await appointmentService.GetAllAppointmentsAsync()).Count;
+            ViewBag.PatientsCount = (await userManager.GetUsersInRoleAsync("Patient")).Count;
+            return View(doctors);
         }
 
         public IActionResult Privacy()

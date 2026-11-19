@@ -36,7 +36,8 @@ namespace ClinicBookingSystem.Services.Implementation
                 ProfileImageUrl = d.ProfileImageUrl,
                 ConsultationDurationMinutes = d.ConsultationDurationMinutes,
                 IsActive = d.IsActive,
-                SpecialtyName = d.Specialty.Name
+                SpecialtyName = d.Specialty.Name,
+                SpecialtyDescription=d.Specialty.Description
             }).ToListAsync();
 
           return result;
