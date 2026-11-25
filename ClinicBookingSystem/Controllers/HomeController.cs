@@ -31,6 +31,8 @@ namespace ClinicBookingSystem.Controllers
             return View(doctors);
         }
 
+
+
         public IActionResult Privacy()
         {
             return View();

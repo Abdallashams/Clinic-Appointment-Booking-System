@@ -1,0 +1,321 @@
+﻿
+@model List<GetAppointmentVM>
+@{
+    ViewData["Title"] = "Patient Appointments";
+    var patientName = "";
+    foreach (var a in Model)
+    {
+        patientName = a.PatientName ?? "";
+        break;
+    }
+}
+
+<style>
+    .page-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin: 1.6rem 0 1.2rem;
+    }
+
+        .page-head h2 {
+            color: var(--navy);
+            font-weight: 800;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+        }
+
+            .page-head h2 i {
+                color: var(--teal);
+            }
+
+        .page-head p {
+            color: var(--muted);
+            margin: .25rem 0 0;
+            font-size: .95rem;
+        }
+
+    .table-card {
+        background: #fff;
+        border: 1px solid #eef2f7;
+        border-radius: 20px;
+        box-shadow: 0 18px 40px rgba(15, 42, 67, .08);
+        padding: 1.2rem 1.4rem;
+    }
+
+    .appt-table {
+        margin: 0;
+    }
+
+        .appt-table thead th {
+            color: var(--muted);
+            font-size: .78rem;
+            letter-spacing: .6px;
+            text-transform: uppercase;
+            border-bottom: 2px solid #eef2f7;
+            padding: .8rem .75rem;
+        }
+
+        .appt-table tbody td {
+            padding: .95rem .75rem;
+            vertical-align: middle;
+            border-color: #f1f5f9;
+            color: var(--navy);
+        }
+
+        .appt-table tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .appt-table tbody tr.row-cancelled {
+            opacity: .55;
+        }
+
+    .person-name {
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: .55rem;
+    }
+
+        .person-name i {
+            color: var(--teal-dark);
+            background: #f0fdfa;
+            border: 1px solid #99f6e4;
+            border-radius: 8px;
+            padding: .3rem .4rem;
+            font-size: .85rem;
+        }
+
+    .sub-line {
+        color: var(--muted);
+        font-size: .84rem;
+        margin-top: .1rem;
+    }
+
+    .date-cell {
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .time-cell {
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+    }
+
+        .time-cell i {
+            color: var(--teal);
+            margin-right: .3rem;
+        }
+
+    .notes-cell {
+        color: var(--muted);
+        font-size: .9rem;
+        max-width: 180px;
+    }
+
+    .status-badge {
+        font-size: .75rem;
+        font-weight: 700;
+        border-radius: 999px;
+        padding: .24rem .75rem;
+        white-space: nowrap;
+    }
+
+    .st-pending {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .st-confirmed {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+    .st-cancelled {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+
+    .st-completed {
+        background: #e0e7ff;
+        color: #3730a3;
+    }
+
+    .actions-cell {
+        white-space: nowrap;
+    }
+
+    .btn-act {
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: .82rem;
+        padding: .35rem .8rem;
+    }
+
+    .btn-confirm {
+        border: 1.5px solid var(--teal);
+        color: var(--teal-dark);
+        background: #fff;
+    }
+
+        .btn-confirm:hover {
+            background: var(--teal);
+            color: #fff;
+        }
+
+    .btn-complete {
+        border: 1.5px solid var(--navy);
+        color: var(--navy);
+        background: #fff;
+    }
+
+        .btn-complete:hover {
+            background: var(--navy);
+            color: #fff;
+        }
+
+    .btn-cancel-appt {
+        border: 1.5px solid #fecaca;
+        color: #dc2626;
+        background: #fff;
+    }
+
+        .btn-cancel-appt:hover {
+            background: #dc2626;
+            border-color: #dc2626;
+            color: #fff;
+        }
+
+    .act-form {
+        display: inline;
+    }
+
+    .empty-box {
+        background: #fff;
+        border: 1px dashed #cbd5e1;
+        border-radius: 20px;
+        padding: 3rem 1.5rem;
+        text-align: center;
+        color: var(--muted);
+    }
+
+        .empty-box i {
+            font-size: 2.6rem;
+            color: var(--teal);
+            display: block;
+            margin-bottom: .8rem;
+        }
+</style>
+
+<div class="page-head">
+    <div>
+        <h2><i class="bi bi-person-lines-fill"></i> Patient Appointments</h2>
+        @if (!string.IsNullOrWhiteSpace(patientName))
+        {
+            <p>@patientName — @Model.Count appointment(s) in total.</p>
+        }
+        else
+        {
+            <p>@Model.Count appointment(s) in total.</p>
+        }
+    </div>
+</div>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger"><i class="bi bi-exclamation-triangle"></i> @TempData["Error"]</div>
+}
+
+@if (Model.Count == 0)
+{
+    <div class="empty-box">
+        <i class="bi bi-calendar-x"></i>
+        <div class="fw-semibold" style="color: var(--navy);">No appointments yet</div>
+        <div>This patient has not booked any appointment so far.</div>
+    </div>
+}
+else
+{
+    <div class="table-card">
+        <table class="table appt-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Doctor</th>
+                    <th>Status</th>
+                    <th>Notes</th>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <th class="text-end">Actions</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    var badge = "st-pending";
+                    var badgeIcon = "bi-hourglass-split";
+                    if (item.Status == ClinicBookingSystem.Models.AppointmentStatus.Confirmed) { badge = "st-confirmed"; badgeIcon = "bi-check-circle"; }
+                    else if (item.Status == ClinicBookingSystem.Models.AppointmentStatus.Cancelled) { badge = "st-cancelled"; badgeIcon = "bi-x-circle"; }
+                    else if (item.Status == ClinicBookingSystem.Models.AppointmentStatus.Completed) { badge = "st-completed"; badgeIcon = "bi-clipboard2-check"; }
+                    var notes = item.Notes ?? "";
+                    if (notes.Length > 40) { notes = notes.Substring(0, 40) + "..."; }
+                    <tr class="@(item.Status == ClinicBookingSystem.Models.AppointmentStatus.Cancelled ? "row-cancelled" : "")">
+                        <td class="date-cell">@item.AppointmentDate.ToString("ddd, dd MMM yyyy")</td>
+                        <td class="time-cell"><i class="bi bi-clock"></i>@item.StartTime.ToString(@"hh\:mm") – @item.EndTime.ToString(@"hh\:mm")</td>
+                        <td>
+                            <span class="person-name"><i class="bi bi-heart-pulse-fill"></i> @item.DoctorName</span>
+                            <div class="sub-line">@item.SpecialtyName</div>
+                        </td>
+                        <td><span class="status-badge @badge"><i class="bi @badgeIcon"></i> @item.Status</span></td>
+                        <td class="notes-cell" title="@item.Notes">@(string.IsNullOrWhiteSpace(notes) ? "—" : notes)</td>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <td class="actions-cell text-end">
+                                @if (item.Status == ClinicBookingSystem.Models.AppointmentStatus.Pending)
+                                {
+                                    <form asp-action="Confirm" asp-route-id="@item.Id" method="post" class="act-form">
+                                        <button type="submit" class="btn btn-act btn-confirm">
+                                            <i class="bi bi-check-lg"></i> Confirm
+                                        </button>
+                                    </form>
+                                    <form asp-action="Cancel" asp-route-id="@item.Id" method="post" class="act-form"
+                                          onsubmit="return confirm('Cancel this appointment?');">
+                                        <button type="submit" class="btn btn-act btn-cancel-appt">
+                                            <i class="bi bi-x-lg"></i> Cancel
+                                        </button>
+                                    </form>
+                                }
+                                else if (item.Status == ClinicBookingSystem.Models.AppointmentStatus.Confirmed)
+                                {
+                                    <form asp-action="Complete" asp-route-id="@item.Id" method="post" class="act-form">
+                                        <button type="submit" class="btn btn-act btn-complete">
+                                            <i class="bi bi-clipboard2-check"></i> Complete
+                                        </button>
+                                    </form>
+                                    <form asp-action="Cancel" asp-route-id="@item.Id" method="post" class="act-form"
+                                          onsubmit="return confirm('Cancel this appointment?');">
+                                        <button type="submit" class="btn btn-act btn-cancel-appt">
+                                            <i class="bi bi-x-lg"></i> Cancel
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <span class="sub-line">—</span>
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

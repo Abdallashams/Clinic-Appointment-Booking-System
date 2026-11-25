@@ -1,11 +1,8 @@
 ﻿using ClinicBookingSystem.ModelVM.Appointment;
-using ClinicBookingSystem.Services.Implementation;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace ClinicBookingSystem.Controllers
 {
@@ -19,10 +16,20 @@ namespace ClinicBookingSystem.Controllers
             this.appointmentservic = appointmentservic;
             this.doctorService = doctorService;
         }
+        [Authorize(Roles = "Admin")]
+
         [HttpGet]
         public async Task<IActionResult> Index()
         {
             var appointments = await appointmentservic.GetAllAppointmentsAsync();
+
+            return View(appointments);
+        }
+        [HttpGet]
+        public async Task<IActionResult> PatientAppointments()
+        {
+            var patientId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var appointments = await appointmentservic.GetPatientAppointmentsAsync(patientId);
 
             return View(appointments);
         }
@@ -37,7 +44,7 @@ namespace ClinicBookingSystem.Controllers
                 DoctorId = doctorId ?? 0
             });
         }
-        //[Authorize(Roles = "Patient")]
+        [Authorize(Roles = "Patient")]
         [HttpPost]
         public async Task<IActionResult> Create(CreateAppointmentVM model)
         {
@@ -52,7 +59,7 @@ namespace ClinicBookingSystem.Controllers
             try
             {
                 await appointmentservic.BookAppointmentAsync(model, patientId);
-                return RedirectToAction("Index");
+                return RedirectToAction("PatientAppointments");
             }
             catch (InvalidOperationException ex)
             {
@@ -63,7 +70,7 @@ namespace ClinicBookingSystem.Controllers
             }
         }
 
-        //[Authorize(Roles = "Patient")]
+        [Authorize(Roles = "Patient")]
         [HttpGet]
         public async Task<IActionResult> GetAvailableTimes(int doctorId, DateTime date)
         {
@@ -108,6 +115,17 @@ namespace ClinicBookingSystem.Controllers
             if (info == null)
                 return NotFound();
             return Json(info);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Doctor")]
+        public async Task<IActionResult> DoctorSchedule(int doctorId, DateTime? date)
+        {
+            var day = (date ?? DateTime.Today).Date;
+            var appointments = await appointmentservic.GetDoctorAppointmentsAsync(doctorId, day);
+            ViewBag.DoctorId = doctorId;
+            ViewBag.Date = day;
+            return View(appointments);
         }
     }
 }
