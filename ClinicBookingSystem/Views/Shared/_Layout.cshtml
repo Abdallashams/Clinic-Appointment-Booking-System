@@ -1,9 +1,10 @@
-﻿
-@using Microsoft.AspNetCore.Identity
+﻿@using Microsoft.AspNetCore.Identity
 @inject SignInManager<ApplicationUser> SignInManager
 @{
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
-    Func<string, string> active = c => currentController == c ? "active" : "";
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+    Func<string, string, string> active = (c, a) => currentController == c && (string.IsNullOrEmpty(a) || currentAction == a) ? "active" : "";
+    var userDisplayName = User.Identity?.Name?.Split('@')[0] ?? "";
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -17,210 +18,10 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/Home.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ClinicBookingSystem.styles.css" asp-append-version="true" />
-    <style>
-        :root {
-            --teal: #0d9488;
-            --teal-dark: #0f766e;
-            --navy: #0f2a43;
-            --ink: #1e293b;
-            --muted: #64748b;
-        }
-
-        html, body {
-            overflow-x: clip;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            color: var(--ink);
-        }
-
-        /* ---------- Topbar (mirrors the prototype's sticky white header) ---------- */
-        .topbar {
-            position: sticky;
-            top: 0;
-            z-index: 1030;
-            background: #fff;
-            box-shadow: 0 2px 12px rgba(15, 42, 67, .08);
-        }
-
-        .topbar-wrap {
-            max-width: 1200px;
-        }
-
-        .navbar-brand {
-            display: flex;
-            align-items: center;
-            gap: .65rem;
-            padding: 0;
-        }
-
-            .navbar-brand .logo-mark {
-                width: 42px;
-                height: 42px;
-                border-radius: 11px;
-                flex: 0 0 42px;
-                background: linear-gradient(135deg, #0d9488, #0f766e);
-                color: #fff;
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 1.3rem;
-                box-shadow: 0 6px 14px rgba(13, 148, 136, .28);
-            }
-
-        .brand-text {
-            display: flex;
-            flex-direction: column;
-            line-height: 1.15;
-        }
-
-        .brand-name {
-            font-weight: 800;
-            font-size: 1.3rem;
-            color: var(--navy);
-        }
-
-            .brand-name span {
-                color: var(--teal);
-            }
-
-        .brand-tag {
-            font-size: .72rem;
-            font-weight: 500;
-            color: var(--muted);
-            letter-spacing: .2px;
-        }
-
-        .topbar .nav-link {
-            color: var(--navy);
-            font-weight: 500;
-            font-size: .95rem;
-            padding: .5rem .8rem !important;
-        }
-
-            .topbar .nav-link:hover {
-                color: var(--teal-dark);
-            }
-
-            .topbar .nav-link.active {
-                color: var(--teal-dark);
-                font-weight: 600;
-            }
-
-                .topbar .nav-link.active::after {
-                    content: "";
-                    display: block;
-                    height: 2px;
-                    border-radius: 2px;
-                    background: var(--teal);
-                    margin-top: 2px;
-                }
-
-        .btn-register {
-            background: linear-gradient(120deg, #0d9488, #0f766e);
-            color: #fff !important;
-            border-radius: 10px;
-            padding: .5rem 1.1rem !important;
-            font-weight: 600;
-            font-size: .92rem;
-            box-shadow: 0 6px 14px rgba(13, 148, 136, .28);
-        }
-
-            .btn-register:hover {
-                color: #fff !important;
-                transform: translateY(-1px);
-            }
-
-        .btn-logout {
-            color: var(--navy);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: .95rem;
-        }
-
-            .btn-logout:hover {
-                color: #dc2626;
-            }
-
-        .nav-user {
-            color: var(--muted);
-            font-size: .92rem;
-            display: flex;
-            align-items: center;
-            gap: .4rem;
-        }
-
-        /* ---------- Footer (mirrors the prototype's navy footer) ---------- */
-        .site-footer {
-            background: var(--navy);
-            color: #cbd5e1;
-        }
-
-            .site-footer h6 {
-                color: #fff;
-                font-weight: 700;
-                font-size: .95rem;
-                margin-bottom: .9rem;
-            }
-
-            .site-footer ul {
-                list-style: none;
-                padding: 0;
-                margin: 0;
-                display: grid;
-                gap: .45rem;
-            }
-
-            .site-footer a {
-                color: #cbd5e1;
-                text-decoration: none;
-                font-size: .92rem;
-            }
-
-                .site-footer a:hover {
-                    color: #5eead4;
-                }
-
-            .site-footer .footer-brand {
-                color: #fff;
-                font-weight: 800;
-                font-size: 1.15rem;
-            }
-
-                .site-footer .footer-brand span {
-                    color: #5eead4;
-                }
-
-            .site-footer .footer-bottom {
-                border-top: 1px solid rgba(255, 255, 255, .12);
-                font-size: .85rem;
-                color: #94a3b8;
-            }
-
-        /* Hide an empty validation summary in layout views too (same rule as the auth views). */
-        .validation-summary-valid {
-            display: none;
-        }
-
-        .validation-summary-errors ul {
-            margin-bottom: 0;
-        }
-
-        @@media (max-width: 575px) {
-            .brand-tag {
-                display: none;
-            }
-
-            .brand-name {
-                font-size: 1.15rem;
-            }
-        }
-    </style>
 </head>
 <body>
     <header class="topbar">
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light">
+        <nav class="navbar navbar-expand-lg navbar-toggleable-lg navbar-light">
             <div class="container topbar-wrap">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
                     <span class="logo-mark"><i class="bi bi-heart-pulse-fill"></i></span>
@@ -233,28 +34,28 @@
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1 align-items-sm-center gap-sm-1">
+                <div class="navbar-collapse collapse d-lg-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1 align-items-lg-center gap-lg-1">
                         <li class="nav-item">
-                            <a class="nav-link text-nowrap @(active("Home"))" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-nowrap @(active("Home", "Index"))" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
 
                         @if (!SignInManager.IsSignedIn(User) || User.IsInRole("Patient"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-nowrap @(active("Doctor"))" asp-area="" asp-controller="Doctor" asp-action="Index">Find a Doctor</a>
+                                <a class="nav-link text-nowrap @(active("Doctor", "Index"))" asp-area="" asp-controller="Doctor" asp-action="Index">Find a Doctor</a>
                             </li>
                         }
 
                         @if (SignInManager.IsSignedIn(User) && User.IsInRole("Doctor"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-nowrap @(active("Appointment"))"
+                                <a class="nav-link text-nowrap @(active("Appointment", "DoctorSchedule"))"
                                    asp-area="" asp-controller="Appointment" asp-action="DoctorSchedule">My Schedule</a>
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link text-nowrap @(active("AvailabilitySlot"))"
+                                <a class="nav-link text-nowrap @(active("AvailabilitySlot", "Create"))"
                                    asp-area="" asp-controller="AvailabilitySlot" asp-action="Create"> Add Slot </a>
                             </li>
                         }
@@ -262,38 +63,32 @@
                         @if (SignInManager.IsSignedIn(User) && User.IsInRole("Patient"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-nowrap @(active("Appointment"))" asp-area="" asp-controller="Appointment" asp-action="PatientAppointments">My Appointments</a>
+                                <a class="nav-link text-nowrap @(active("Appointment", "PatientAppointments"))" asp-area="" asp-controller="Appointment" asp-action="PatientAppointments">My Appointments</a>
                             </li>
                         }
 
                         @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-nowrap @(active("User"))" asp-area="" asp-controller="User" asp-action="Index">Users</a>
+                                <a class="nav-link text-nowrap @(active("User", "Index"))" asp-area="" asp-controller="User" asp-action="Index">Users</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-nowrap @(active("Doctor"))" asp-area="" asp-controller="Doctor" asp-action="Index">Doctors</a>
+                                <a class="nav-link text-nowrap @(active("Doctor", "Index"))" asp-area="" asp-controller="Doctor" asp-action="Index">Doctors</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-nowrap @(active("Appointment"))" asp-area="" asp-controller="Appointment" asp-action="Index">All Appointments</a>
+                                <a class="nav-link text-nowrap @(active("Appointment", "Index"))" asp-area="" asp-controller="Appointment" asp-action="Index">All Appointments</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-nowrap @(active("AvailabilitySlot"))"
+                                <a class="nav-link text-nowrap @(active("AvailabilitySlot", "Create"))"
                                    asp-area="" asp-controller="AvailabilitySlot" asp-action="Create">Add Doctor Slot</a>
                             </li>
                         }
-                        @if (SignInManager.IsSignedIn(User) && User.IsInRole("Doctor"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link @(active("Appointment"))" asp-area="" asp-controller="Appointment" asp-action="DoctorSchedule" asp-route-doctorId="3">Doctor Schedule</a>
-                            </li>
-                        }
                     </ul>
-                    <ul class="navbar-nav align-items-sm-center">
+                    <ul class="navbar-nav align-items-lg-center">
                         @if (SignInManager.IsSignedIn(User))
                         {
                             <li class="nav-item">
-                                <span class="nav-user nav-link"><i class="bi bi-person-circle"></i> Hello, @User.Identity?.Name!</span>
+                                <span class="nav-user nav-link"><i class="bi bi-person-circle"></i> Hello, @userDisplayName!</span>
                             </li>
                             <li class="nav-item">
                                 <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
@@ -338,7 +133,7 @@
                     <ul>
                         <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
                         <li><a asp-area="" asp-controller="Doctor" asp-action="Index">Find a Doctor</a></li>
-                        <li><a asp-area="" asp-controller="Appointments" asp-action="Index">My Appointments</a></li>
+                        <li><a asp-area="" asp-controller="Appointment" asp-action="Index">My Appointments</a></li>
                     </ul>
                 </div>
                 <div class="col-md-4">
@@ -368,6 +163,3 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
-
-
-

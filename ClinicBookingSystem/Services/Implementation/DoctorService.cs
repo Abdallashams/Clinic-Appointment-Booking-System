@@ -1,5 +1,6 @@
 ﻿
 using FinalProject.BLL.Helper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
@@ -8,10 +9,12 @@ namespace ClinicBookingSystem.Services.Implementation
     public class DoctorService : IDoctorService
     {
         private readonly ClinicDbContext clinicDbContext;
+        private readonly UserManager<ApplicationUser> userManager;
 
-        public DoctorService(ClinicDbContext clinicDbContext)
+        public DoctorService(ClinicDbContext clinicDbContext,UserManager<ApplicationUser> userManager)
         {
             this.clinicDbContext = clinicDbContext;
+            this.userManager = userManager;
         }
 
         public async Task<bool> DeleteDoctor(int id)
@@ -85,6 +88,9 @@ namespace ClinicBookingSystem.Services.Implementation
 
         public async Task<bool> MakeDoctor(CreateDoctorVM createDoctorVM)
         {
+            var user = await clinicDbContext.Users
+                .FirstOrDefaultAsync(u => u.Email == createDoctorVM.Email);
+
             var Doctor = new Doctor
             {
                 FullName = createDoctorVM.FullName,
@@ -94,13 +100,18 @@ namespace ClinicBookingSystem.Services.Implementation
                 ConsultationDurationMinutes = createDoctorVM.ConsultationDurationMinutes,
                 SpecialtyId = createDoctorVM.SpecialtyId,
                 ProfileImageUrl = Upload.UploadFile("Files", createDoctorVM.ProfileImage),
-                ApplicationUserId = createDoctorVM.ApplicationUserId,
-
+                ApplicationUserId = user?.Id
             };
+
             var result = await clinicDbContext.Doctors.AddAsync(Doctor);
             if (result != null)
             {
                 await clinicDbContext.SaveChangesAsync();
+
+                if (user != null)
+                {
+                    await userManager.AddToRoleAsync(user, "Doctor");
+                }
                 return true;
             }
             return false;
