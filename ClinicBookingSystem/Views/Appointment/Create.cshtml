@@ -4,9 +4,12 @@
 }
 
 <style>
+    .validation-summary-valid {
+        display: none;
+    }
+
     .page-head {
         display: flex;
-        align-items: center;
         justify-content: flex-end;
         margin: 1.4rem 0 1rem;
     }
@@ -86,7 +89,7 @@
             font-weight: 600;
         }
 
-    /* Doctor header */
+    /* Doctor profile */
     .doc-head {
         display: flex;
         gap: 1.2rem;
@@ -106,7 +109,6 @@
         justify-content: center;
         font-size: 1.9rem;
         font-weight: 800;
-        letter-spacing: 1px;
         box-shadow: 0 10px 22px rgba(13, 148, 136, .30);
     }
 
@@ -136,10 +138,16 @@
             margin-right: .3rem;
         }
 
-    /* Weekly schedule table */
+    .doc-bio {
+        color: var(--navy);
+        line-height: 1.7;
+        margin: 1.1rem 0 0;
+    }
+
     .sched-table {
         width: 100%;
         border-collapse: collapse;
+        margin-top: 1.2rem;
     }
 
         .sched-table th {
@@ -206,7 +214,7 @@
 
         .time-chip.active {
             background: linear-gradient(120deg, #0d9488, #0f766e);
-            color: #fff;
+            color: #fff !important;
             border-color: transparent;
         }
 
@@ -219,36 +227,10 @@
         text-align: center;
     }
 
-    .summary-box {
-        background: #f0fdfa;
-        border: 1px solid #ccfbf1;
-        border-radius: 14px;
-        padding: 1rem 1.1rem;
-        margin-top: 1.1rem;
-    }
-
-        .summary-box .sum-row {
-            display: flex;
-            justify-content: space-between;
-            gap: 1rem;
-            padding: .3rem 0;
-        }
-
-        .summary-box .sum-label {
-            color: var(--muted);
-            font-size: .92rem;
-        }
-
-        .summary-box .sum-value {
-            color: var(--navy);
-            font-weight: 700;
-            text-align: right;
-        }
-
     .btn-book {
         width: 100%;
         background: linear-gradient(120deg, #0d9488, #0f766e);
-        color: #fff;
+        color: #fff !important;
         border: none;
         border-radius: 10px;
         padding: .75rem 1.6rem;
@@ -258,7 +240,7 @@
     }
 
         .btn-book:hover {
-            color: #fff;
+            color: #fff !important;
             transform: translateY(-1px);
         }
 
@@ -280,9 +262,8 @@
     <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
     <div class="row g-4">
-        @* ================= Left: doctor profile ================= *@
+        @* ============ Left: doctor profile ============ *@
         <div class="col-lg-8">
-            @* Doctor picker — changing it reloads the whole profile + times *@
             <div class="panel-card">
                 <label class="form-label" for="DoctorId">Doctor</label>
                 <div class="input-group">
@@ -294,7 +275,6 @@
                 <span asp-validation-for="DoctorId"></span>
             </div>
 
-            @* Doctor header *@
             <div class="panel-card">
                 <div class="doc-head">
                     <div class="doc-avatar" id="docInitials">?</div>
@@ -307,17 +287,8 @@
                         </div>
                     </div>
                 </div>
-            </div>
+                <p class="doc-bio" id="docBio">Pick a doctor above to read his bio.</p>
 
-            @* About *@
-            <div class="panel-card">
-                <div class="panel-title"><i class="bi bi-info-circle"></i> About</div>
-                <p class="mb-0" style="color: var(--navy); line-height: 1.7;" id="docBio">Pick a doctor above to read his bio.</p>
-            </div>
-
-            @* Weekly schedule *@
-            <div class="panel-card">
-                <div class="panel-title"><i class="bi bi-calendar3"></i> Weekly schedule — AvailabilitySlots</div>
                 <table class="sched-table">
                     <thead>
                         <tr><th>Day</th><th>Working hours</th><th>Slot length</th></tr>
@@ -333,7 +304,7 @@
             </div>
         </div>
 
-        @* ================= Right: booking panel ================= *@
+        @* ============ Right: booking panel ============ *@
         <div class="col-lg-4">
             <div class="panel-card booking-panel">
                 <div class="panel-title"><i class="bi bi-calendar-plus"></i> Book an appointment</div>
@@ -345,7 +316,6 @@
                         <input asp-for="AppointmentDate" type="date" class="form-control" />
                     </div>
                     <span asp-validation-for="AppointmentDate"></span>
-                    <div class="form-hint" id="hoursNote"></div>
                 </div>
 
                 <div class="mb-3">
@@ -366,12 +336,6 @@
                     <span asp-validation-for="Notes"></span>
                 </div>
 
-                <div class="summary-box">
-                    <div class="sum-row"><span class="sum-label">Doctor</span><span class="sum-value" id="pvDoctor">—</span></div>
-                    <div class="sum-row"><span class="sum-label">Date</span><span class="sum-value" id="pvDate">—</span></div>
-                    <div class="sum-row"><span class="sum-label">Time</span><span class="sum-value" id="pvTime">— pick a time —</span></div>
-                </div>
-
                 <button type="submit" class="btn btn-book">
                     <i class="bi bi-calendar-check"></i> Confirm Booking
                 </button>
@@ -389,37 +353,31 @@
         var timeInput = document.getElementById('StartTime');
         var timesBox = document.getElementById('timesBox');
         var timeHint = document.getElementById('timeHint');
-        var hoursNote = document.getElementById('hoursNote');
         var infoUrl = '@Url.Action("GetDoctorInfo", "Appointment")';
         var timesUrl = '@Url.Action("GetAvailableTimes", "Appointment")';
         var defaultHint = timeHint.textContent;
-        var dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-        var currentSchedule = [];
         var currentDuration = 0;
 
-        // The date picker cannot offer days in the past (the service checks again anyway).
+        // No past days (the service checks again anyway).
         var now = new Date();
-        var mm = String(now.getMonth() + 1).padStart(2, '0');
-        var dd = String(now.getDate()).padStart(2, '0');
-        dateInput.min = now.getFullYear() + '-' + mm + '-' + dd;
+        dateInput.min = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
         timeInput.value = ''; // a fresh form has no time until a chip is picked
 
         function to12h(value) {
             var parts = value.split(':');
             var h = parseInt(parts[0], 10);
-            var suffix = h >= 12 ? 'PM' : 'AM';
-            var h12 = h % 12;
-            if (h12 === 0) h12 = 12;
-            return h12 + ':' + parts[1] + ' ' + suffix;
+            var h12 = h % 12 || 12;
+            return h12 + ':' + parts[1] + ' ' + (h >= 12 ? 'PM' : 'AM');
         }
 
         function initialsOf(name) {
             var parts = name.trim().split(/\s+/);
-            if (parts.length >= 2) return (parts[0].charAt(0) + parts[1].charAt(0)).toUpperCase();
-            return name.charAt(0).toUpperCase();
+            return parts.length >= 2
+                ? (parts[0].charAt(0) + parts[1].charAt(0)).toUpperCase()
+                : name.charAt(0).toUpperCase();
         }
 
-        // ---------- Doctor profile (header / About / schedule) ----------
+        // Doctor profile: header + bio + weekly schedule, then reload the times.
         function loadDoctorInfo() {
             var doctorId = doctorSelect.value;
             if (!doctorId) {
@@ -431,11 +389,8 @@
                 document.getElementById('docBio').textContent = 'Pick a doctor above to read his bio.';
                 document.getElementById('scheduleBody').innerHTML =
                     '<tr><td colspan="3" style="color: var(--muted);">No doctor selected yet.</td></tr>';
-                currentSchedule = [];
                 currentDuration = 0;
-                updateHoursNote();
                 loadTimes();
-                syncSummary();
                 return;
             }
 
@@ -447,58 +402,30 @@
                     document.getElementById('docSpecialty').textContent = info.specialtyName || 'General';
                     document.getElementById('docDuration').textContent = 'Consultation duration: ' + info.consultationDurationMinutes + ' min';
                     document.getElementById('docBio').textContent = info.bio ? info.bio : 'No bio provided for this doctor yet.';
-                    currentSchedule = info.schedule || [];
                     currentDuration = info.consultationDurationMinutes;
+                    var schedule = info.schedule || [];
 
                     var days = [];
-                    currentSchedule.forEach(function (row) { if (days.indexOf(row.day) === -1) days.push(row.day); });
+                    schedule.forEach(function (row) { if (days.indexOf(row.day) === -1) days.push(row.day); });
                     document.getElementById('docDays').textContent = 'Working days: ' + (days.length ? days.join(', ') : '—');
 
-                    var tbody = document.getElementById('scheduleBody');
-                    if (!currentSchedule.length) {
-                        tbody.innerHTML = '<tr><td colspan="3" style="color: var(--muted);">This doctor has no weekly schedule yet.</td></tr>';
-                    } else {
-                        tbody.innerHTML = '';
-                        currentSchedule.forEach(function (row) {
-                            var tr = document.createElement('tr');
-                            tr.innerHTML = '<td class="sched-day"></td><td></td><td></td>';
-                            tr.children[0].textContent = row.day;
-                            tr.children[1].textContent = to12h(row.startTime) + ' – ' + to12h(row.endTime);
-                            tr.children[2].textContent = 'every ' + currentDuration + ' min';
-                            tbody.appendChild(tr);
-                        });
-                    }
+                    document.getElementById('scheduleBody').innerHTML = schedule.length
+                        ? schedule.map(function (row) {
+                            return '<tr><td class="sched-day">' + row.day + '</td><td>' +
+                                to12h(row.startTime) + ' – ' + to12h(row.endTime) + '</td><td>every ' +
+                                currentDuration + ' min</td></tr>';
+                        }).join('')
+                        : '<tr><td colspan="3" style="color: var(--muted);">This doctor has no weekly schedule yet.</td></tr>';
 
-                    updateHoursNote();
                     loadTimes();
-                    syncSummary();
                 })
                 .catch(function () {
                     document.getElementById('docName').textContent = 'Could not load this doctor';
-                    currentSchedule = [];
-                    updateHoursNote();
                     loadTimes();
                 });
         }
 
-        // ---------- Working-hours note under the date ----------
-        function updateHoursNote() {
-            if (!doctorSelect.value || !dateInput.value || !currentSchedule.length) {
-                hoursNote.textContent = '';
-                return;
-            }
-            var dayName = dayNames[new Date(dateInput.value + 'T00:00:00').getDay()];
-            var rows = currentSchedule.filter(function (r) { return r.day === dayName; });
-            if (!rows.length) {
-                hoursNote.textContent = 'The doctor does not work on ' + dayName + 's — pick another date.';
-                return;
-            }
-            var ranges = rows.map(function (r) { return to12h(r.startTime) + ' – ' + to12h(r.endTime); });
-            hoursNote.textContent = 'Working hours on ' + dayName + ': ' + ranges.join(', ') +
-                ' · only free times are shown — booked or passed times are hidden.';
-        }
-
-        // ---------- Free-times chips ----------
+        // Free-times chips for the chosen doctor + date.
         function loadTimes() {
             timeInput.value = '';
             timeHint.textContent = defaultHint;
@@ -508,7 +435,6 @@
             var date = dateInput.value;
             if (!doctorId || !date) {
                 timesBox.innerHTML = '<div class="times-empty">Select a doctor and a date to see the free times.</div>';
-                syncSummary();
                 return;
             }
 
@@ -518,60 +444,43 @@
                 .then(function (times) {
                     if (!times.length) {
                         timesBox.innerHTML = '<div class="times-empty">No free times on this day — try another date.</div>';
-                    } else {
-                        timesBox.innerHTML = '';
-                        var grid = document.createElement('div');
-                        grid.className = 'times-grid';
-                        times.forEach(function (t) {
-                            var chip = document.createElement('button');
-                            chip.type = 'button';
-                            chip.className = 'time-chip';
-                            chip.textContent = to12h(t);
-                            chip.setAttribute('data-time', t);
-                            chip.addEventListener('click', function () { selectTime(t, chip); });
-                            grid.appendChild(chip);
-                        });
-                        timesBox.appendChild(grid);
-
-                        // After a failed booking attempt, re-pick the time the patient had chosen.
-                        var preselected = timeInput.getAttribute('data-selected');
-                        if (preselected && times.indexOf(preselected) !== -1) {
-                            var match = grid.querySelector('[data-time="' + preselected + '"]');
-                            if (match) selectTime(preselected, match);
-                        }
+                        return;
                     }
-                    syncSummary();
+                    var grid = document.createElement('div');
+                    grid.className = 'times-grid';
+                    times.forEach(function (t) {
+                        var chip = document.createElement('button');
+                        chip.type = 'button';
+                        chip.className = 'time-chip';
+                        chip.textContent = to12h(t);
+                        chip.setAttribute('data-time', t);
+                        chip.addEventListener('click', function () { selectTime(t, chip); });
+                        grid.appendChild(chip);
+                    });
+                    timesBox.innerHTML = '';
+                    timesBox.appendChild(grid);
+
+                    // After a failed booking attempt, re-pick the time the patient had chosen.
+                    var preselected = timeInput.getAttribute('data-selected');
+                    if (preselected && times.indexOf(preselected) !== -1) {
+                        var match = grid.querySelector('[data-time="' + preselected + '"]');
+                        if (match) selectTime(preselected, match);
+                    }
                 })
                 .catch(function () {
                     timesBox.innerHTML = '<div class="times-empty">Could not load the times — change the date or doctor to try again.</div>';
-                    syncSummary();
                 });
         }
 
         function selectTime(value, chip) {
             timeInput.value = value;
-            var chips = timesBox.querySelectorAll('.time-chip');
-            chips.forEach(function (c) { c.classList.remove('active'); });
+            timesBox.querySelectorAll('.time-chip').forEach(function (c) { c.classList.remove('active'); });
             chip.classList.add('active');
             timeHint.textContent = defaultHint;
             timeHint.classList.remove('error');
-            syncSummary();
         }
 
-        // ---------- Summary box ----------
-        function syncSummary() {
-            var docText = doctorSelect.options[doctorSelect.selectedIndex].text;
-            document.getElementById('pvDoctor').textContent = doctorSelect.value ? docText : '—';
-            if (dateInput.value) {
-                document.getElementById('pvDate').textContent =
-                    new Date(dateInput.value + 'T00:00:00').toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' });
-            } else {
-                document.getElementById('pvDate').textContent = '—';
-            }
-            document.getElementById('pvTime').textContent = timeInput.value ? to12h(timeInput.value) : '— pick a time —';
-        }
-
-        // ---------- Guards + events ----------
+        // Must pick a time before submitting.
         document.getElementById('bookingForm').addEventListener('submit', function (e) {
             if (doctorSelect.value && dateInput.value && !timeInput.value) {
                 e.preventDefault();
@@ -582,8 +491,7 @@
         });
 
         doctorSelect.addEventListener('change', loadDoctorInfo);
-        dateInput.addEventListener('change', function () { updateHoursNote(); loadTimes(); syncSummary(); });
+        dateInput.addEventListener('change', loadTimes);
         loadDoctorInfo(); // fills everything when the doctor arrives pre-selected
     </script>
 }
-

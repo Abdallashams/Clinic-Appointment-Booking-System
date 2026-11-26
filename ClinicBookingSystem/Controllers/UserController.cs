@@ -48,7 +48,7 @@ namespace ClinicBookingSystem.Controllers
 
         public async Task<IActionResult> MakeDoctor(string userId)
         {
-            var result = await userService.AddUserToAdmin(userId);
+            var result = await userService.AddUserToDoctor(userId);
             if (!result)
             {
                 ModelState.AddModelError("", "Failed to add user to doctor role.");

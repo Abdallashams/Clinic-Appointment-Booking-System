@@ -70,7 +70,6 @@ namespace ClinicBookingSystem.Controllers
             }
         }
 
-        [Authorize(Roles = "Patient")]
         [HttpGet]
         public async Task<IActionResult> GetAvailableTimes(int doctorId, DateTime date)
         {
