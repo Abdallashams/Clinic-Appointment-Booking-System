@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "Add Availability Slot";
+    var isDoctorOnly = User.IsInRole("Doctor") && !User.IsInRole("Admin");
+    var currentDoctorName = ViewBag.CurrentDoctorName as string ?? User.Identity?.Name ?? "";
 }
 
 <style>
@@ -142,17 +144,30 @@
     <div class="form-card">
         <form asp-action="Create" method="post" id="slotForm">
             <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
-
-            <div class="mb-3">
-                <label class="form-label" for="DoctorId">Doctor</label>
-                <div class="input-group">
-                    <span class="input-group-text"><i class="bi bi-person"></i></span>
-                    <select asp-for="DoctorId" asp-items="ViewBag.Doctors" class="form-select">
-                        <option value="">-- Select doctor --</option>
-                    </select>
+            @if (User.IsInRole("Doctor") && !User.IsInRole("Admin"))
+            {
+                <input type="hidden" asp-for="DoctorId" />
+                <div class="mb-3">
+                    <label class="form-label">Doctor</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                        <input type="text" class="form-control" value="@(ViewBag.CurrentDoctorName ?? User.Identity?.Name)" readonly />
+                    </div>
                 </div>
-                <span asp-validation-for="DoctorId"></span>
-            </div>
+            }
+            else
+            {
+                <div class="mb-3">
+                    <label class="form-label" for="DoctorId">Doctor</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                        <select asp-for="DoctorId" asp-items="ViewBag.Doctors" class="form-select">
+                            <option value="">-- Select doctor --</option>
+                        </select>
+                    </div>
+                    <span asp-validation-for="DoctorId"></span>
+                </div>
+            }
 
             <div class="mb-3">
                 <label asp-for="DayOfWeek" class="form-label"></label>

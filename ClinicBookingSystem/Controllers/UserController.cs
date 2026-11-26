@@ -1,8 +1,9 @@
-﻿using ClinicBookingSystem.Services.Implementation;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClinicBookingSystem.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class UserController : Controller
     {
         private readonly IUserService userService;
@@ -11,6 +12,8 @@ namespace ClinicBookingSystem.Controllers
         {
             this.userService = userService;
         }
+
+
         public async Task<IActionResult> Index()
         {
             var users = await userService.GetAllActiveUsersAsync();
@@ -20,6 +23,7 @@ namespace ClinicBookingSystem.Controllers
             }
             return View(users);
         }
+
         public async Task<IActionResult> Delete(string userId)
         {
             var result = await userService.DeleteUserAsync(userId);
@@ -29,6 +33,8 @@ namespace ClinicBookingSystem.Controllers
             }
             return RedirectToAction("Index");
         }
+
+
         public async Task<IActionResult> MakeAdmin(string userId)
         {
             var result = await userService.AddUserToAdmin(userId);
@@ -38,12 +44,14 @@ namespace ClinicBookingSystem.Controllers
             }
             return RedirectToAction("Index");
         }
+
+
         public async Task<IActionResult> MakeDoctor(string userId)
         {
             var result = await userService.AddUserToAdmin(userId);
             if (!result)
             {
-                ModelState.AddModelError("", "Failed to add user to admin role.");
+                ModelState.AddModelError("", "Failed to add user to doctor role.");
             }
             return RedirectToAction("Index");
         }

@@ -1,11 +1,9 @@
-﻿
-using ClinicBookingSystem.ModelVM.User;
+﻿using ClinicBookingSystem.ModelVM.User;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClinicBookingSystem.Services.Implementation
-{
-    
+{  
     public class UserService : IUserService
     {
         private readonly UserManager<ApplicationUser> userManager;
@@ -39,6 +37,7 @@ namespace ClinicBookingSystem.Services.Implementation
                 throw new Exception($"Failed to create user: {errors}");
             }
         }
+
         public async Task<bool> DeleteUserAsync(string userId)
         {
             var user = await userManager.FindByIdAsync(userId);
@@ -92,9 +91,8 @@ namespace ClinicBookingSystem.Services.Implementation
 
         public async Task SignOutAsync()
         {
- 
             await signInManager.SignOutAsync();
-          }
+        }
 
 
 

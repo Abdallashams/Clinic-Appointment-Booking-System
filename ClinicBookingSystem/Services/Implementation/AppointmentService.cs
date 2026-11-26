@@ -200,6 +200,7 @@ namespace ClinicBookingSystem.Services.Implementation
                 })
                 .ToListAsync();
         }
+
         //for patient to see his schedule
         public async Task<List<GetAppointmentVM>> GetPatientAppointmentsAsync(string patientId)
         {
@@ -224,6 +225,7 @@ namespace ClinicBookingSystem.Services.Implementation
                 })
                 .ToListAsync();
         }
+
 
         public async Task<bool> RescheduleAsync(UpdateAppointmentVM appointmentVM)
         {
@@ -288,6 +290,7 @@ namespace ClinicBookingSystem.Services.Implementation
             await clinicDbContext.SaveChangesAsync();
             return true;
         }
+
         public async Task<List<TimeSpan>> GetAvailableTimesAsync(int doctorId, DateTime date)
         {
             var doctor = await clinicDbContext.Doctors.FirstOrDefaultAsync(d => d.Id == doctorId);

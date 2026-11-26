@@ -1,9 +1,11 @@
-﻿using ClinicBookingSystem.ModelVM.AvailabilitySlot;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Security.Claims;
 
 namespace ClinicBookingSystem.Controllers
 {
+    [Authorize(Roles = "Doctor,Admin")]
     public class AvailabilitySlotController : Controller
     {
         private readonly IAvailabilitySlotService slotService;
@@ -37,9 +39,20 @@ namespace ClinicBookingSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
+            if (User.IsInRole("Doctor") && !User.IsInRole("Admin"))
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var doctor = string.IsNullOrEmpty(userId) ? null : await doctorService.GetByUserId(userId);
+                if (doctor == null) return NotFound("Doctor profile not found.");
+
+                ViewBag.CurrentDoctorName = doctor.FullName;
+                return View(new CreateAvailabilitySlotVM { DoctorId = doctor.Id });
+            }
+
             ViewBag.Doctors = new SelectList(await doctorService.GetAll(), "Id", "FullName");
             return View();
         }
+
 
 
 
@@ -47,6 +60,16 @@ namespace ClinicBookingSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateAvailabilitySlotVM model)
         {
+            if (User.IsInRole("Doctor") && !User.IsInRole("Admin"))
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var doctor = string.IsNullOrEmpty(userId) ? null : await doctorService.GetByUserId(userId);
+                if (doctor == null) return NotFound("Doctor profile not found.");
+
+                model.DoctorId = doctor.Id;
+                ModelState.Remove(nameof(model.DoctorId));
+            }
+
             if (ModelState.IsValid)
             {
                 try
@@ -61,9 +84,11 @@ namespace ClinicBookingSystem.Controllers
                     ModelState.AddModelError(string.Empty, ex.Message);
                 }
             }
+
             ViewBag.Doctors = new SelectList(await doctorService.GetAll(), "Id", "FullName", model.DoctorId);
             return View(model);
         }
+
 
 
 

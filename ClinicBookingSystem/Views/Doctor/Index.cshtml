@@ -282,11 +282,14 @@ else
                         }
                     </div>
 
-                    <div class="d-flex gap-2 mt-3">
-                        <a class="btn btn-book flex-fill" asp-controller="Appointment" asp-action="Create" asp-route-doctorId="@d.Id">
+                    @if(User.IsInRole("Patient"))
+                    {
+                     <div class="d-flex gap-2 mt-3">
+                            <a class="btn btn-book flex-fill d-inline-flex align-items-center justify-content-center gap-2" asp-controller="Appointment" asp-action="Create" asp-route-doctorId="@d.Id">
                             <i class="bi bi-calendar-check"></i> Book
                         </a>
-                    </div>
+                     </div>
+                    }
 
                     @if (User.IsInRole("Admin"))
                     {

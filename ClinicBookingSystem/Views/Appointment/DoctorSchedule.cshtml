@@ -101,26 +101,24 @@
 <div class="filter-card">
     <span class="day-label"><i class="bi bi-calendar3"></i>@day.ToString("ddd, dd MMM yyyy")</span>
     <span class="filter-spacer"></span>
-    <a asp-action="DoctorSchedule" asp-route-doctorId="@doctorId" asp-route-date="@prevDay" class="btn-daynav">
+    <a asp-action="DoctorSchedule" asp-route-date="@prevDay" class="btn-daynav">
         <i class="bi bi-chevron-left"></i> Prev day
     </a>
     <form method="get" asp-action="DoctorSchedule" class="d-flex align-items-center gap-2 m-0">
-        <input type="hidden" name="doctorId" value="@doctorId" />
         <label for="date">Date</label>
         <input type="date" id="date" name="date" class="form-control" value="@day.ToString("yyyy-MM-dd")" />
         <button type="submit" class="btn btn-show">Show</button>
     </form>
-    <a asp-action="DoctorSchedule" asp-route-doctorId="@doctorId" asp-route-date="@nextDay" class="btn-daynav">
+    <a asp-action="DoctorSchedule" asp-route-date="@nextDay" class="btn-daynav">
         Next day <i class="bi bi-chevron-right"></i>
     </a>
 </div>
-
 @if (Model.Count == 0)
 {
     <div class="empty-box">
         <i class="bi bi-calendar-x"></i>
         <div class="fw-semibold" style="color: var(--navy);">No appointments on this day</div>
-        <div>This doctor has nothing booked for @day.ToString("dd MMM yyyy") — try another day.</div>
+        <div>You have no appointments booked for @day.ToString("dd MMM yyyy") — try another day.</div>
     </div>
 }
 else
@@ -154,12 +152,12 @@ else
                         <td class="actions-cell text-end">
                             @if (item.Status == ClinicBookingSystem.Models.AppointmentStatus.Pending)
                             {
-                                <form asp-action="Confirm" asp-route-id="@item.Id" method="post" class="act-form">
+                                <form asp-action="Confirm" asp-route-id="@item.Id" asp-route-date="@day.ToString("yyyy-MM-dd")" method="post" class="act-form">
                                     <button type="submit" class="btn btn-act btn-confirm">
                                         <i class="bi bi-check-lg"></i> Confirm
                                     </button>
                                 </form>
-                                <form asp-action="Cancel" asp-route-id="@item.Id" method="post" class="act-form"
+                                <form asp-action="Cancel" asp-route-id="@item.Id" asp-route-date="@day.ToString("yyyy-MM-dd")" method="post" class="act-form"
                                       onsubmit="return confirm('Cancel this appointment?');">
                                     <button type="submit" class="btn btn-act btn-cancel-appt">
                                         <i class="bi bi-x-lg"></i> Cancel
@@ -168,12 +166,12 @@ else
                             }
                             else if (item.Status == ClinicBookingSystem.Models.AppointmentStatus.Confirmed)
                             {
-                                <form asp-action="Complete" asp-route-id="@item.Id" method="post" class="act-form">
+                                <form asp-action="Complete" asp-route-id="@item.Id" asp-route-date="@day.ToString("yyyy-MM-dd")" method="post" class="act-form">
                                     <button type="submit" class="btn btn-act btn-complete">
                                         <i class="bi bi-clipboard2-check"></i> Complete
                                     </button>
                                 </form>
-                                <form asp-action="Cancel" asp-route-id="@item.Id" method="post" class="act-form"
+                                <form asp-action="Cancel" asp-route-id="@item.Id" asp-route-date="@day.ToString("yyyy-MM-dd")" method="post" class="act-form"
                                       onsubmit="return confirm('Cancel this appointment?');">
                                     <button type="submit" class="btn btn-act btn-cancel-appt">
                                         <i class="bi bi-x-lg"></i> Cancel
@@ -191,3 +189,4 @@ else
         </table>
     </div>
 }
+

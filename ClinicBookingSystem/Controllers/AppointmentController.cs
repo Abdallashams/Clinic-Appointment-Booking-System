@@ -77,36 +77,46 @@ namespace ClinicBookingSystem.Controllers
             var times = await appointmentservic.GetAvailableTimesAsync(doctorId, date.Date);
             return Json(times.Select(t => t.ToString(@"hh\:mm")));
         }
+
+
         [HttpPost]
-        public async Task<IActionResult> Confirm(int id)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Confirm(int id, DateTime? date)
         {
             var result = await appointmentservic.ConfirmAsync(id);
             if (!result)
             {
                 TempData["Error"] = "This appointment cannot be confirmed.";
             }
-            return RedirectToAction("Index");
+            return RedirectAfterStatusChange(date);
         }
+
+
         [HttpPost]
-        public async Task<IActionResult> Cancel(int id)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Cancel(int id, DateTime? date)
         {
             var result = await appointmentservic.CancelAsync(id);
             if (!result)
             {
-                TempData["Error"] = "This appointment cannot be canceld.";
+                TempData["Error"] = "This appointment cannot be cancelled.";
             }
-            return RedirectToAction("Index");
+            return RedirectAfterStatusChange(date);
         }
+
+
         [HttpPost]
-        public async Task<IActionResult> Complete(int id)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Complete(int id, DateTime? date)
         {
             var result = await appointmentservic.CompleteAsync(id);
             if (!result)
             {
                 TempData["Error"] = "This appointment cannot be completed.";
             }
-            return RedirectToAction("Index");
+            return RedirectAfterStatusChange(date);
         }
+
 
         [HttpGet]
         public async Task<IActionResult> GetDoctorInfo(int doctorId)
@@ -119,13 +129,35 @@ namespace ClinicBookingSystem.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Doctor")]
-        public async Task<IActionResult> DoctorSchedule(int doctorId, DateTime? date)
+        public async Task<IActionResult> DoctorSchedule(DateTime? date)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+                return Challenge();
+
+            var doctor = await doctorService.GetByUserId(userId);
+            if (doctor == null)
+                return NotFound("Doctor profile not found.");
+
             var day = (date ?? DateTime.Today).Date;
-            var appointments = await appointmentservic.GetDoctorAppointmentsAsync(doctorId, day);
-            ViewBag.DoctorId = doctorId;
+            var appointments = await appointmentservic.GetDoctorAppointmentsAsync(doctor.Id, day);
+
+            ViewBag.DoctorId = doctor.Id;
+            ViewBag.DoctorName = doctor.FullName;
             ViewBag.Date = day;
+
+
             return View(appointments);
         }
+
+
+        private IActionResult RedirectAfterStatusChange(DateTime? date)
+        {
+            if (User.IsInRole("Doctor"))
+                return RedirectToAction(nameof(DoctorSchedule), new { date = date?.ToString("yyyy-MM-dd") });
+
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }

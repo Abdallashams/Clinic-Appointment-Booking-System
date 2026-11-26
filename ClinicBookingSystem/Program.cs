@@ -6,7 +6,7 @@ namespace ClinicBookingSystem
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -37,37 +37,49 @@ namespace ClinicBookingSystem
             builder.Services.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = "/Account/Login";
+                options.LogoutPath = "/Account/Logout";
                 options.AccessDeniedPath = "/Account/AccessDenied";
+                options.ExpireTimeSpan = TimeSpan.FromHours(2);
+
             });
+
+
+            builder.Services.AddHttpContextAccessor();
+
 
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IDoctorService, DoctorService>();
-            builder.Services.AddScoped<ISpecialtyService , SpecialtyService>();
+            builder.Services.AddScoped<ISpecialtyService, SpecialtyService>();
             builder.Services.AddScoped<IAvailabilitySlotService, AvailabilitySlotService>();
             builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 
 
+
             var app = builder.Build();
 
-            if (!app.Environment.IsDevelopment())
-            {
-                app.UseExceptionHandler("/Home/Error");
-                app.UseHsts();
-            }
+            
 
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
 
-            app.UseRouting();
+                if (!app.Environment.IsDevelopment())
+                {
+                    app.UseExceptionHandler("/Home/Error");
+                    app.UseHsts();
+                    app.UseHttpsRedirection();
+                }
 
-            app.UseAuthentication();
-            app.UseAuthorization();
 
-            app.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Account}/{action=Register}/{id?}");
+                app.UseStaticFiles();
+                app.UseRouting();
+                app.UseAuthentication();
+                app.UseAuthorization();
 
-            app.Run();
+                app.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Account}/{action=Register}/{id?}");
+
+                app.Run();
+
+
         }
     }
 }
